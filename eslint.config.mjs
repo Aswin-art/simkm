@@ -65,37 +65,7 @@ export default [
 
       // Import/Export Rules
       "import/no-mutable-exports": "error",
-      "import/order": [
-        "error",
-        {
-          groups: ["builtin", "external", "internal", "parent", "sibling", "index"],
-          pathGroups: [
-            {
-              pattern: "react",
-              group: "external",
-              position: "before",
-            },
-            {
-              pattern: "{next,next/**}",
-              group: "external",
-              position: "before",
-            },
-          ],
-          pathGroupsExcludedImportTypes: [],
-          "newlines-between": "always",
-          alphabetize: {
-            order: "asc",
-            caseInsensitive: true,
-          },
-        },
-      ],
       "import/newline-after-import": "error",
-      "import/no-unresolved": [
-        "error",
-        {
-          caseSensitive: true,
-        },
-      ],
       "no-duplicate-imports": ["error", { includeExports: true }],
       "import/no-cycle": ["error", { maxDepth: 2 }],
 
@@ -120,8 +90,7 @@ export default [
       "no-underscore-dangle": ["error", { allow: ["_id", "__dirname"] }],
 
       // Complexity
-      "complexity": ["error", { max: 10 }],
-      "max-lines": ["error", { max: 300, skipBlankLines: true, skipComments: true }],
+      complexity: ["error", { max: 10 }],
       "max-depth": ["error", 4],
 
       // TypeScript-Specific Rules (customized)

@@ -147,7 +147,6 @@ export function NavMain({ items }: NavMainProps) {
 
   const isItemActive = (url: string, subItems?: NavMainItem["subItems"]) => {
     if (subItems?.length) {
-      console.log(path, subItems);
       return subItems.some((sub) => path == sub.url);
     }
     return path === url;
