@@ -2,13 +2,11 @@ import { ColumnDef } from "@tanstack/react-table";
 import { z } from "zod";
 
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
+
+import { productListSchema } from "./schema";
 import { Checkbox } from "@/components/ui/checkbox";
 
-import { sectionSchema } from "./schema";
-import { TableCellViewer } from "./table-cell-viewer";
-import { CellAction } from "./cell-action";
-
-export const dashboardColumns: ColumnDef<z.infer<typeof sectionSchema>>[] = [
+export const productListColumns: ColumnDef<z.infer<typeof productListSchema>>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -35,7 +33,7 @@ export const dashboardColumns: ColumnDef<z.infer<typeof sectionSchema>>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Product Name" />,
-    cell: ({ row }) => <TableCellViewer item={row.original} />,
+    cell: ({ row }) => <span>{row.original.name}</span>,
   },
   {
     accessorKey: "description",
@@ -63,10 +61,5 @@ export const dashboardColumns: ColumnDef<z.infer<typeof sectionSchema>>[] = [
     accessorKey: "bep",
     header: ({ column }) => <DataTableColumnHeader column={column} title="BEP" />,
     cell: ({ row }) => <span>Rp {row.original.bep.toLocaleString()}</span>,
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => <CellAction item={row.original} />,
-    enableSorting: false,
   },
 ];

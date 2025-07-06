@@ -5,23 +5,40 @@ import * as React from "react";
 import { Plus } from "lucide-react";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DataTable as DataTableNew } from "@/components/user-sales-table/data-table";
+import { DataTable as ProductList } from "@/components/user-sales-table/data-table";
 import { DataTablePagination } from "@/components/user-sales-table/data-table-pagination";
 import { DataTableViewOptions } from "@/components/user-sales-table/data-table-view-options";
-import { withDndColumn } from "@/components/user-sales-table/table-utils";
 import { useDataTableInstance } from "@/hooks/use-data-table-instance";
 
-import { dashboardColumns } from "./columns";
-import { sectionSchema } from "./schema";
+import { lastSalesColumns } from "./last-sales-columns";
+import { productListColumns } from "./product-list-columns";
+import { lastSalesSchema, productListSchema } from "./schema";
+import Link from "next/link";
 
-export function DataTable({ data: initialData }: { data: z.infer<typeof sectionSchema>[] }) {
-  const [data, setData] = React.useState(() => initialData);
-  const columns = withDndColumn(dashboardColumns);
-  const table = useDataTableInstance({ data, columns, getRowId: (row) => row.id.toString() });
+export function DataTable({
+  lastSales,
+  productList,
+}: {
+  lastSales: z.infer<typeof lastSalesSchema>[];
+  productList: z.infer<typeof productListSchema>[];
+}) {
+  const [lastSalesData, setLastSalesData] = React.useState(() => lastSales);
+  const lastSalesTable = useDataTableInstance({
+    data: lastSalesData,
+    columns: lastSalesColumns,
+    getRowId: (row) => row.id.toString(),
+  });
+
+  const [productListData, setProductListData] = React.useState(() => productList);
+  const productListTable = useDataTableInstance({
+    data: productListData,
+    columns: productListColumns,
+    getRowId: (row) => row.id.toString(),
+  });
 
   return (
     <Tabs defaultValue="last-sales" className="w-full flex-col justify-start gap-6">
@@ -47,24 +64,32 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof sectionS
           </TabsTrigger>
         </TabsList>
         <div className="flex items-center gap-2">
-          <DataTableViewOptions table={table} />
-          <Button variant="outline" size="sm">
+          <DataTableViewOptions table={lastSalesTable} />
+          <Link
+            href="/umkm/dashboard/business-management/product-list/create"
+            className={buttonVariants({ variant: "outline", size: "sm" })}
+          >
             <Plus />
             <span className="hidden lg:inline">Tambah Produk</span>
-          </Button>
+          </Link>
         </div>
       </div>
       <TabsContent value="last-sales" className="relative flex flex-col gap-4 overflow-auto">
         <div className="overflow-hidden rounded-lg border">
-          <DataTableNew dndEnabled table={table} columns={columns} onReorder={setData} />
+          <ProductList dndEnabled table={lastSalesTable} columns={lastSalesColumns} />
         </div>
-        <DataTablePagination table={table} />
+        <DataTablePagination table={lastSalesTable} />
       </TabsContent>
-      <TabsContent value="list-product" className="flex flex-col">
+      <TabsContent value="list-product" className="relative flex flex-col gap-4 overflow-auto">
         <div className="overflow-hidden rounded-lg border">
-          <DataTableNew dndEnabled table={table} columns={columns} onReorder={setData} />
+          <ProductList
+            dndEnabled
+            table={productListTable}
+            columns={productListColumns}
+            onReorder={setProductListData}
+          />
         </div>
-        <DataTablePagination table={table} />
+        <DataTablePagination table={productListTable} />
       </TabsContent>
     </Tabs>
   );

@@ -2,16 +2,10 @@
 
 import * as React from "react";
 
-import { Plus } from "lucide-react";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DataTable as DataTableNew } from "@/components/user-sales-table/data-table";
+import { DataTable as ListProduct } from "@/components/user-sales-table/data-table";
 import { DataTablePagination } from "@/components/user-sales-table/data-table-pagination";
-import { DataTableViewOptions } from "@/components/user-sales-table/data-table-view-options";
 import { withDndColumn } from "@/components/user-sales-table/table-utils";
 import { useDataTableInstance } from "@/hooks/use-data-table-instance";
 
@@ -26,7 +20,7 @@ export function DataTable({ data: initialData }: { data: z.infer<typeof sectionS
   return (
     <div className="relative flex flex-col gap-4 overflow-auto">
       <div className="overflow-hidden rounded-lg border">
-        <DataTableNew dndEnabled table={table} columns={columns} onReorder={setData} />
+        <ListProduct table={table} columns={columns} />
       </div>
       <DataTablePagination table={table} />
     </div>

@@ -11,6 +11,8 @@ const redirectMap: { [key: string]: string } = {
 
   "/admin/users": "/admin/users/user-list",
 
+  "/auth": "/auth/login",
+
   "/umkm": "/umkm/dashboard/statistic/business-summary",
   "/umkm/dashboard": "/umkm/dashboard/statistic/business-summary",
   "/umkm/dashboard/statistic": "/umkm/dashboard/statistic/business-summary",

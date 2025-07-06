@@ -4,10 +4,9 @@ import { z } from "zod";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { Checkbox } from "@/components/ui/checkbox";
 
-import { sectionSchema } from "./schema";
-import { CellAction } from "./cell-action";
+import { lastSalesSchema } from "./schema";
 
-export const dashboardColumns: ColumnDef<z.infer<typeof sectionSchema>>[] = [
+export const lastSalesColumns: ColumnDef<z.infer<typeof lastSalesSchema>>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -50,10 +49,5 @@ export const dashboardColumns: ColumnDef<z.infer<typeof sectionSchema>>[] = [
     accessorKey: "total_price",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Total Price" />,
     cell: ({ row }) => <span>Rp {row.original.total_price.toLocaleString("id-ID")}</span>,
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => <CellAction item={row.original} />,
-    enableSorting: false,
   },
 ];

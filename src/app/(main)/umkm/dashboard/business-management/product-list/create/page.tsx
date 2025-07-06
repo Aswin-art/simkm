@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -22,84 +23,81 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { UploadDropzone } from "@/lib/uploadthing";
-import { X, Plus, ZoomIn } from "lucide-react";
+import { X } from "lucide-react";
 import Link from "next/link";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import Lightbox from "yet-another-react-lightbox";
-import "yet-another-react-lightbox/styles.css";
 
 const formSchema = z.object({
-  name: z.string().min(3, { message: "Location name must be at least 3 characters." }),
-  address: z.string().min(5, { message: "Address must be at least 5 characters." }),
-  description: z.string().min(10, { message: "Description must be at least 10 characters." }),
-  image: z.string({ required_error: "Please upload a location image." }),
-  tagId: z.string({ required_error: "Please select a tag location." }),
-  facilities: z
-    .array(
-      z.object({
-        id: z.string(),
-        facilityId: z.string(),
-        facilityName: z.string(),
-        image: z.string(),
-      }),
-    )
-    .default([]),
+  name: z.string().min(3, { message: "Nama produk minimal 3 karakter." }),
+  description: z.string().min(10, { message: "Deskripsi minimal 10 karakter." }),
+  price: z.number().min(0, { message: "Harga harus lebih dari 0." }),
+  image: z.string({ required_error: "Harap upload gambar produk." }),
+
+  hpp: z.object({
+    biayaBahanBaku: z.number().min(0, { message: "Biaya bahan baku harus lebih dari 0." }),
+    biayaTenagaKerja: z.number().min(0, { message: "Biaya tenaga kerja harus lebih dari 0." }),
+    biayaLainLain: z.number().min(0, { message: "Biaya lain-lain harus lebih dari 0." }),
+    jumlahUnitProduksi: z.number().min(1, { message: "Jumlah unit produksi minimal 1." }),
+  }),
+
+  bep: z.object({
+    biayaTetap: z.number().min(0, { message: "Biaya tetap harus lebih dari 0." }),
+    biayaJualPerUnit: z.number().min(0, { message: "Biaya jual per unit harus lebih dari 0." }),
+    biayaVariabelPerUnit: z.number().min(0, { message: "Biaya variabel per unit harus lebih dari 0." }),
+    marginKeuntungan: z.number().min(0, { message: "Margin keuntungan harus lebih dari 0." }),
+  }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 const Page = () => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [lightboxIndex, setLightboxIndex] = useState(0);
-
   const router = useRouter();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      address: "",
       description: "",
+      price: 0,
       image: "",
-      tagId: "",
-      facilities: [],
+      hpp: {
+        biayaBahanBaku: 0,
+        biayaTenagaKerja: 0,
+        biayaLainLain: 0,
+        jumlahUnitProduksi: 1,
+      },
+      bep: {
+        biayaTetap: 0,
+        biayaJualPerUnit: 0,
+        biayaVariabelPerUnit: 0,
+        marginKeuntungan: 0,
+      },
     },
   });
 
-  async function addLocation(data: FormValues) {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/locations`, {
+  async function addProduct(data: FormValues) {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/products`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
-    if (!res.ok) throw new Error("Failed to add location");
+    if (!res.ok) throw new Error("Failed to add product");
     return res.json();
   }
 
   const { mutate, isPending } = useMutation({
-    mutationFn: addLocation,
+    mutationFn: addProduct,
     onSuccess: () => {
-      toast.success("Data berhasil ditambahkan!");
+      toast.success("Produk berhasil ditambahkan!");
       form.reset();
-      router.push("/dashboards/locations");
+      router.push("/dashboards/products");
     },
     onError: () => {
-      toast.error("Gagal menambahkan lokasi. Tolong coba lagi.");
+      toast.error("Gagal menambahkan produk. Tolong coba lagi.");
     },
   });
 
   const onSubmit = (values: FormValues) => {
     mutate(values);
-  };
-
-  const removeFacility = (id: string) => {
-    const currentFacilities = form.getValues("facilities");
-    form.setValue(
-      "facilities",
-      currentFacilities.filter((facility) => facility.id !== id),
-    );
-    toast.success("Fasilitas berhasil dihapus");
   };
 
   return (
@@ -116,16 +114,16 @@ const Page = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Tambah Data Produk</BreadcrumbPage>
+              <BreadcrumbPage>Tambah Produk</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
         <div className="flex items-center justify-between gap-4">
           <div className="flex flex-col gap-2">
-            <h2 className="text-3xl font-bold tracking-tight">Form Penambahan Data</h2>
+            <h2 className="text-3xl font-bold tracking-tight">Form Produk</h2>
             <p className="text-muted-foreground max-w-lg text-sm">
-              Lengkapi form dibawah ini untuk menambah data produk baru.
+              Lengkapi form dibawah ini untuk menambah produk baru.
             </p>
           </div>
         </div>
@@ -133,26 +131,20 @@ const Page = () => {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="mb-28 space-y-6">
-            {/* Image (single URL) */}
+            {/* Image Upload */}
             <FormField
               control={form.control}
               name="image"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Gambar Lokasi <span className="text-red-500">*</span>
+                    Gambar Produk <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
                     {field.value ? (
                       <div className="flex flex-col items-center justify-center gap-2">
                         <div className="relative h-[500px] w-full">
-                          <Image
-                            src={field.value}
-                            alt="submission image"
-                            className="object-contain"
-                            loading="lazy"
-                            fill
-                          />
+                          <Image src={field.value} alt="product image" className="object-contain" loading="lazy" fill />
                         </div>
 
                         <Button
@@ -167,7 +159,7 @@ const Page = () => {
                     ) : (
                       <UploadDropzone
                         disabled={form.formState.isSubmitting}
-                        endpoint="locations"
+                        endpoint="images"
                         className="relative h-[500px] w-full"
                         onClientUploadComplete={(res) => {
                           form.setValue("image", res[0].url);
@@ -180,6 +172,8 @@ const Page = () => {
                 </FormItem>
               )}
             />
+
+            {/* Basic Product Info */}
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
               {/* Name */}
               <FormField
@@ -188,128 +182,52 @@ const Page = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Nama Lokasi <span className="text-red-500">*</span>
+                      Nama Produk <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input disabled={form.formState.isSubmitting} placeholder="Masukkan nama lokasi" {...field} />
+                      <Input disabled={form.formState.isSubmitting} placeholder="Masukkan nama produk" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              {/* Address */}
+              {/* Price */}
               <FormField
                 control={form.control}
-                name="address"
+                name="price"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Alamat Lokasi <span className="text-red-500">*</span>
+                      Harga Produk <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input disabled={form.formState.isSubmitting} placeholder="Masukkan alamat lengkap" {...field} />
+                      <Input
+                        type="number"
+                        disabled={form.formState.isSubmitting}
+                        placeholder="Masukkan harga produk"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
-              {/* Fasum Section */}
-              <div>
-                <div className="mb-2 flex items-center justify-between">
-                  <FormLabel>
-                    Fasilitas Umum <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button
-                        type="button"
-                        size="sm"
-                        className="flex cursor-pointer items-center gap-1 bg-blue-500 hover:bg-blue-600"
-                      >
-                        <Plus className="h-4 w-4" /> Tambah Fasilitas
-                      </Button>
-                    </DialogTrigger>
-                  </Dialog>
-                </div>
-
-                {/* Display Added Facilities */}
-                <FormField
-                  control={form.control}
-                  name="facilities"
-                  render={({ field }) => (
-                    <FormItem>
-                      {field.value.length === 0 ? (
-                        <p className="text-muted-foreground text-sm">Belum ada fasilitas yang ditambahkan</p>
-                      ) : (
-                        <div className="mb-4 space-y-2">
-                          {field.value.map((facility, index) => (
-                            <div
-                              key={facility.id}
-                              className="flex w-full items-center justify-between rounded-md border p-2"
-                            >
-                              <div className="flex items-center gap-3">
-                                <div
-                                  className="group relative h-16 w-16 cursor-pointer overflow-hidden rounded-md"
-                                  onClick={() => {
-                                    setLightboxIndex(index);
-                                    setLightboxOpen(true);
-                                  }}
-                                >
-                                  <Image
-                                    src={facility.image}
-                                    alt={facility.facilityName}
-                                    fill
-                                    className="transition-filter object-cover filter duration-300 group-hover:blur-sm"
-                                  />
-                                  <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                                    <ZoomIn size={24} className="text-white" />
-                                  </div>
-                                </div>
-                                <p className="font-medium">{facility.facilityName}</p>
-                              </div>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon"
-                                className="cursor-pointer text-red-500 hover:bg-red-50 hover:text-red-700"
-                                onClick={() => removeFacility(facility.id)}
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          ))}
-
-                          <Lightbox
-                            open={lightboxOpen}
-                            close={() => setLightboxOpen(false)}
-                            index={lightboxIndex}
-                            slides={field.value.map((facility) => ({
-                              src: facility.image,
-                            }))}
-                          />
-                        </div>
-                      )}
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
 
               {/* Description */}
               <FormField
                 control={form.control}
                 name="description"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="lg:col-span-2">
                     <FormLabel>
-                      Deskripsi Tempat <span className="text-red-500">*</span>
+                      Deskripsi Produk <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
                       <Textarea
                         disabled={form.formState.isSubmitting}
-                        placeholder="Tuliskan deskripsi"
+                        placeholder="Tuliskan deskripsi produk"
                         className="min-h-32"
                         {...field}
                       />
@@ -320,17 +238,223 @@ const Page = () => {
               />
             </div>
 
+            {/* HPP Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Harga Pokok Produksi (HPP)</CardTitle>
+                <CardDescription>Perhitungan biaya produksi untuk menentukan harga pokok produk</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                  {/* Biaya Bahan Baku */}
+                  <FormField
+                    control={form.control}
+                    name="hpp.biayaBahanBaku"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Biaya Bahan Baku <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            disabled={form.formState.isSubmitting}
+                            placeholder="Masukkan biaya bahan baku"
+                            {...field}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Biaya Tenaga Kerja */}
+                  <FormField
+                    control={form.control}
+                    name="hpp.biayaTenagaKerja"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Biaya Tenaga Kerja <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            disabled={form.formState.isSubmitting}
+                            placeholder="Masukkan biaya tenaga kerja"
+                            {...field}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Biaya Lain-lain */}
+                  <FormField
+                    control={form.control}
+                    name="hpp.biayaLainLain"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Biaya Lain-lain <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            disabled={form.formState.isSubmitting}
+                            placeholder="Masukkan biaya lain-lain"
+                            {...field}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Jumlah Unit Produksi */}
+                  <FormField
+                    control={form.control}
+                    name="hpp.jumlahUnitProduksi"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Jumlah Unit Produksi <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            disabled={form.formState.isSubmitting}
+                            placeholder="Masukkan jumlah unit produksi"
+                            {...field}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* BEP Section */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Break Even Point (BEP)</CardTitle>
+                <CardDescription>Perhitungan titik impas untuk menentukan target penjualan minimum</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                  {/* Biaya Tetap */}
+                  <FormField
+                    control={form.control}
+                    name="bep.biayaTetap"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Biaya Tetap <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            disabled={form.formState.isSubmitting}
+                            placeholder="Masukkan biaya tetap"
+                            {...field}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Biaya Jual Per Unit */}
+                  <FormField
+                    control={form.control}
+                    name="bep.biayaJualPerUnit"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Biaya Jual Per Unit <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            disabled={form.formState.isSubmitting}
+                            placeholder="Masukkan biaya jual per unit"
+                            {...field}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Biaya Variabel Per Unit */}
+                  <FormField
+                    control={form.control}
+                    name="bep.biayaVariabelPerUnit"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Biaya Variabel Per Unit <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            disabled={form.formState.isSubmitting}
+                            placeholder="Masukkan biaya variabel per unit"
+                            {...field}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Margin Keuntungan */}
+                  <FormField
+                    control={form.control}
+                    name="bep.marginKeuntungan"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Margin Keuntungan <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            disabled={form.formState.isSubmitting}
+                            placeholder="Masukkan margin keuntungan"
+                            {...field}
+                            onChange={(e) => field.onChange(Number(e.target.value))}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
             <div className="flex gap-2">
               <Link
-                href={"/dashboards/locations"}
+                href={"/umkm/dashboard/business-management/product-list"}
                 className={buttonVariants({
                   variant: "ghost",
                 })}
               >
                 Kembali
               </Link>
-              <Button type="submit" disabled={isPending} className="cursor-pointer bg-blue-500 hover:bg-blue-600">
-                {isPending ? "Loading..." : "Tambahkan Data"}
+              <Button type="submit" disabled={isPending} className="bg-primary cursor-pointer">
+                {isPending ? "Loading..." : "Tambah Produk"}
               </Button>
             </div>
           </form>

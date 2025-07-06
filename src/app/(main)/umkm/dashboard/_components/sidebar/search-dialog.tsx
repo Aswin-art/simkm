@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
 
-import { ChartPie, Grid2X2, ChartLine, ShoppingBag, BookA, Forklift, Search } from "lucide-react";
+import { ChartPie, ShoppingBag, BookA, Forklift, Search, List } from "lucide-react";
 
 import {
   CommandDialog,
@@ -11,25 +11,35 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
+  CommandShortcut,
 } from "@/components/ui/command";
+import { useRouter } from "next/navigation";
 
 const searchItems = [
-  { group: "Analisa Statistik", icon: ChartPie, label: "Analisa UMKM" },
-  { group: "Analisa Statistik", icon: Grid2X2, label: "Sebaran Wilayah" },
-  { group: "Analisa Statistik", icon: ChartLine, label: "Pertumbuhan" },
-  { group: "Data UMKM", icon: ShoppingBag, label: "Daftar UMKM" },
-  { group: "Data UMKM", icon: BookA, label: "Verifikasi UMKM" },
-  { group: "Data UMKM", icon: Forklift, label: "Aktivitas UMKM" },
-  { group: "Program Bantuan", icon: Forklift, label: "Daftar Program" },
-  { group: "Program Bantuan", icon: Forklift, label: "UMKM Penerima" },
-  { group: "Program Bantuan", icon: Forklift, label: "Riwayat Bantuan" },
-  { group: "Users", label: "Daftar Pengguna" },
-  { group: "Users", label: "Verifikasi Pengguna" },
-  { group: "Users", label: "Hak Akses" },
+  {
+    group: "Statistik Usaha",
+    icon: ChartPie,
+    label: "Statistik Produk",
+    url: "/umkm/dashboard/statistic/business-summary",
+  },
+  {
+    group: "Manajemen Usaha",
+    icon: List,
+    label: "Daftar Produk",
+    url: "/umkm/dashboard/business-management/product-list",
+  },
+  {
+    group: "Manajemen Usaha",
+    icon: BookA,
+    label: "Data Penjualan",
+    url: "/umkm/dashboard/business-management/sales-data",
+  },
+  { group: "Keuangan & Inventori", icon: Forklift, label: "Laporan", isComing: true, url: "" },
 ];
 
 export function SearchDialog() {
   const [open, setOpen] = React.useState(false);
+  const router = useRouter();
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
@@ -54,7 +64,7 @@ export function SearchDialog() {
         </kbd>
       </div>
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Cari data umkm, pengguna, dan lainnya..." />
+        <CommandInput placeholder="Cari statistik usaha, manajemen usaha dan lainnya..." />
         <CommandList>
           <CommandEmpty>Data tidak ditemukan.</CommandEmpty>
           {[...new Set(searchItems.map((item) => item.group))].map((group, i) => (
@@ -64,10 +74,23 @@ export function SearchDialog() {
                 {searchItems
                   .filter((item) => item.group === group)
                   .map((item) => (
-                    <CommandItem className="!py-1.5" key={item.label} onSelect={() => setOpen(false)}>
-                      {item.icon && <item.icon />}
-                      <span>{item.label}</span>
-                      {/* {item.shortcut && <CommandShortcut>{item.shortcut}</CommandShortcut>} */}
+                    <CommandItem
+                      key={item.label}
+                      className={`flex items-center justify-between !py-1.5 ${
+                        item.isComing ? "pointer-events-none cursor-not-allowed opacity-50" : ""
+                      }`}
+                      onSelect={() => {
+                        if (!item.isComing) {
+                          setOpen(false);
+                          router.push(item.url);
+                        }
+                      }}
+                    >
+                      <div className="flex items-center gap-2">
+                        <item.icon />
+                        <span>{item.label}</span>
+                      </div>
+                      {item.isComing && <CommandShortcut className="text-gray-400">Coming Soon</CommandShortcut>}
                     </CommandItem>
                   ))}
               </CommandGroup>

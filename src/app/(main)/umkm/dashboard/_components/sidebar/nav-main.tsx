@@ -164,11 +164,17 @@ export function NavMain({ items }: NavMainProps) {
             <SidebarMenuItem className="flex items-center gap-2">
               <SidebarMenuButton
                 tooltip="Tambah Produk"
-                className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 cursor-pointer duration-200 ease-linear"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/90 min-w-8 cursor-pointer transition duration-200 ease-linear"
               >
-                <PlusCircleIcon />
-                <span>Tambah Produk</span>
+                <Link
+                  href="/umkm/dashboard/business-management/product-list/create"
+                  className="flex items-center gap-2"
+                >
+                  <PlusCircleIcon size={16} />
+                  <span className="hidden sm:inline">Tambah Produk</span>
+                </Link>
               </SidebarMenuButton>
+
               <Button
                 size="icon"
                 className="h-9 w-9 shrink-0 group-data-[collapsible=icon]:opacity-0"
