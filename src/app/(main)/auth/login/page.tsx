@@ -26,16 +26,13 @@ export default function LoginV1() {
           <div className="space-y-4 text-center">
             <div className="text-foreground font-medium tracking-tight">Login</div>
             <div className="text-muted-foreground mx-auto max-w-xl">
-              Welcome back. Enter your email and password, let&apos;s hope you remember them this time.
+              Selamat datang di SIMKM, silakan masuk menggunakan akun anda untuk melanjutkan.
             </div>
           </div>
           <div className="space-y-4">
             <LoginFormV1 />
-            <Button className="w-full" variant="outline">
-              Continue with Google
-            </Button>
             <p className="text-muted-foreground text-center text-xs font-medium">
-              Don&apos;t have an account?{" "}
+              Belum memiliki akun?{" "}
               <Link href="register" className="text-primary font-semibold">
                 Register
               </Link>

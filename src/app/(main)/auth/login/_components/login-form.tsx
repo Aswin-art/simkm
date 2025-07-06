@@ -10,9 +10,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-const FormSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address." }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+export const FormSchema = z.object({
+  email: z.string().email({ message: "Silakan masukkan alamat email yang valid." }),
+  password: z.string().min(6, { message: "Kata sandi minimal terdiri dari 6 karakter." }),
   remember: z.boolean().optional(),
 });
 
@@ -44,7 +44,7 @@ export function LoginFormV1() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email Address</FormLabel>
+              <FormLabel>Alamat Email</FormLabel>
               <FormControl>
                 <Input id="email" type="email" placeholder="you@example.com" autoComplete="email" {...field} />
               </FormControl>
@@ -90,7 +90,7 @@ export function LoginFormV1() {
             </FormItem>
           )}
         />
-        <Button className="w-full" type="submit">
+        <Button className="w-full cursor-pointer" type="submit">
           Login
         </Button>
       </form>

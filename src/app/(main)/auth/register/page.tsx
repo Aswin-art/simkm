@@ -14,16 +14,13 @@ export default function RegisterV1() {
           <div className="space-y-4 text-center">
             <div className="text-foreground font-medium tracking-tight">Register</div>
             <div className="text-muted-foreground mx-auto max-w-xl">
-              Fill in your details below. We promise not to quiz you about your first pet&apos;s name (this time).
+              Silakan buat akun Anda untuk mulai mengelola dan memajukan usaha Anda bersama kami.
             </div>
           </div>
           <div className="space-y-4">
             <RegisterFormV1 />
-            <Button className="w-full" variant="outline">
-              Continue with Google
-            </Button>
             <p className="text-muted-foreground text-center text-xs font-medium">
-              Already have an account?{" "}
+              Sudah memiliki akun?{" "}
               <Link href="login" className="text-primary font-semibold">
                 Login
               </Link>
