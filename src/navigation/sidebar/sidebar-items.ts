@@ -58,7 +58,7 @@ export const adminSidebarItems: NavGroup[] = [
         icon: ShoppingBag,
         subItems: [
           { title: "Daftar UMKM", url: "/admin/dashboard/umkm-data/umkm-list", icon: List },
-          { title: "Penjualan UMKM", url: "/admin/dashboard/umkm-data/umkm-activity", icon: ReceiptText },
+          { title: "Penjualan UMKM", url: "/admin/dashboard/umkm-data/umkm-sales", icon: ReceiptText },
         ],
       },
     ],

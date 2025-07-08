@@ -3,8 +3,8 @@ import { z } from "zod";
 export const sectionSchema = z.object({
   id: z.number(),
   name: z.string(),
-  email: z.string(),
-  phone: z.number(),
-  address: z.string(),
-  created_at: z.string(),
+  description: z.string(),
+  price: z.number(),
+  hpp: z.number(),
+  bep: z.number(),
 });
