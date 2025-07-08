@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { loginAction } from "@/actions/auth";
 
 export const FormSchema = z.object({
   email: z.string().email({ message: "Silakan masukkan alamat email yang valid." }),
@@ -16,7 +17,7 @@ export const FormSchema = z.object({
   remember: z.boolean().optional(),
 });
 
-export function LoginFormV1() {
+export function LoginForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -26,14 +27,14 @@ export function LoginFormV1() {
     },
   });
 
+  const isLoading = form.formState.isSubmitting;
+
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    toast("You submitted the following values", {
-      description: (
-        <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+    const res = await loginAction(data);
+    if (res.error) {
+      toast.error(res.error ?? "Terjadi kesalahan saat masuk. Silakan coba lagi.");
+      return;
+    }
   };
 
   return (
@@ -90,8 +91,8 @@ export function LoginFormV1() {
             </FormItem>
           )}
         />
-        <Button className="w-full cursor-pointer" type="submit">
-          Login
+        <Button disabled={isLoading} className="w-full cursor-pointer" type="submit">
+          {isLoading ? "Loading..." : "Login"}
         </Button>
       </form>
     </Form>

@@ -1,8 +1,23 @@
 import Link from "next/link";
-
+import { cookies } from "next/headers";
 import { Lock } from "lucide-react";
+import { redirect } from "next/navigation";
 
-export default function page() {
+export default async function Page() {
+  const cookieStore = await cookies();
+  const role = cookieStore.get("role")?.value;
+
+  if (role !== "admin" && role !== "umkm") {
+    redirect("/auth/login");
+  }
+
+  const homepage =
+    role === "admin"
+      ? "/admin/dashboard/statistic/umkm-analytic"
+      : role === "umkm"
+        ? "/umkm/dashboard/statistic/business-summary"
+        : "/";
+
   return (
     <div className="bg-background flex min-h-dvh flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-md text-center">
@@ -14,7 +29,7 @@ export default function page() {
         </p>
         <div className="mt-6">
           <Link
-            href="dashboard"
+            href={homepage}
             className="bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-primary inline-flex items-center rounded-md px-4 py-2 text-sm font-medium shadow-xs transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-hidden"
             prefetch={false}
           >

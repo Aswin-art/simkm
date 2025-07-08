@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { registerAction } from "@/actions/auth"; // pastikan path sesuai
 
 export const FormSchema = z.object({
   name: z.string().min(1, { message: "Nama usaha wajib diisi." }),
@@ -18,7 +19,7 @@ export const FormSchema = z.object({
   address: z.string().min(1, { message: "Alamat wajib diisi." }),
 });
 
-export function RegisterFormV1() {
+export function RegisterForm() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -30,14 +31,14 @@ export function RegisterFormV1() {
     },
   });
 
+  const isLoading = form.formState.isSubmitting;
+
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    toast("You submitted the following values", {
-      description: (
-        <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+    const res = await registerAction(data);
+    if (res.error) {
+      toast.error(res.error ?? "Terjadi kesalahan saat masuk. Silakan coba lagi.");
+      return;
+    }
   };
 
   return (
@@ -50,7 +51,7 @@ export function RegisterFormV1() {
             <FormItem>
               <FormLabel>Nama Usaha</FormLabel>
               <FormControl>
-                <Input id="name" type="name" placeholder="Bakpia Enak" autoComplete="name" {...field} />
+                <Input id="name" type="text" placeholder="Bakpia Enak" autoComplete="organization" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -63,7 +64,7 @@ export function RegisterFormV1() {
             <FormItem>
               <FormLabel>Alamat Usaha</FormLabel>
               <FormControl>
-                <Textarea id="address" placeholder="Jln. Kenanga No.15" autoComplete="address" {...field} />
+                <Textarea id="address" placeholder="Jln. Kenanga No.15" autoComplete="street-address" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -102,14 +103,14 @@ export function RegisterFormV1() {
             <FormItem>
               <FormLabel>Nomor Telepon</FormLabel>
               <FormControl>
-                <Input id="phone" placeholder="0812345678" autoComplete="phone" {...field} />
+                <Input id="phone" type="tel" placeholder="0812345678" autoComplete="tel" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button className="w-full cursor-pointer" type="submit">
-          Register
+        <Button disabled={isLoading} className="w-full cursor-pointer" type="submit">
+          {isLoading ? "Mendaftarkan..." : "Daftar"}
         </Button>
       </form>
     </Form>

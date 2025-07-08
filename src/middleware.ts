@@ -1,39 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-
 import { authMiddleware } from "./middleware/auth-middleware";
-
-const redirectMap: { [key: string]: string } = {
-  "/admin": "/admin/dashboard/statistic/umkm-analytic",
-  "/admin/dashboard": "/admin/dashboard/statistic/umkm-analytic",
-  "/admin/dashboard/statistic": "/admin/dashboard/statistic/umkm-analytic",
-  "/admin/dashboard/umkm-data": "/admin/dashboard/umkm-data/umkm-list",
-  "/admin/dashboard/fund-program": "/admin/dashboard/fund-program/program-list",
-
-  "/admin/users": "/admin/users/user-list",
-
-  "/auth": "/auth/login",
-
-  "/umkm": "/umkm/dashboard/statistic/business-summary",
-  "/umkm/dashboard": "/umkm/dashboard/statistic/business-summary",
-  "/umkm/dashboard/statistic": "/umkm/dashboard/statistic/business-summary",
-  "/umkm/dashboard/business-management": "/umkm/dashboard/business-management/product-list",
-  "/umkm/dashboard/money-inventory": "/umkm/dashboard/money-inventory/money-reports",
-
-  "/umkm/settings": "/umkm/settings/profile",
-};
+import { roleMiddleware } from "./middleware/role-middleware";
+import { redirectDefaultPages } from "./middleware/redirect-default-pages";
 
 export function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
-  // const response = authMiddleware(req);
-  // if (response) {
-  //   return response;
-  // }
+  const authResponse = authMiddleware(req);
+  if (authResponse) return authResponse;
 
-  if (pathname in redirectMap) {
-    const url = req.nextUrl.clone();
-    url.pathname = redirectMap[pathname];
-    return NextResponse.redirect(url);
-  }
+  const roleResponse = roleMiddleware(req);
+  if (roleResponse) return roleResponse;
+
+  const redirectResponse = redirectDefaultPages(req);
+  if (redirectResponse) return redirectResponse;
 
   return NextResponse.next();
 }

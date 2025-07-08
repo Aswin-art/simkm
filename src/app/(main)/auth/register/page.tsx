@@ -2,11 +2,9 @@ import Link from "next/link";
 
 import { Blocks } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { RegisterForm } from "./_components/register-form";
 
-import { RegisterFormV1 } from "./_components/register-form";
-
-export default function RegisterV1() {
+export default function Register() {
   return (
     <div className="flex h-dvh">
       <div className="bg-background flex w-full items-center justify-center p-8 lg:w-2/3">
@@ -18,7 +16,7 @@ export default function RegisterV1() {
             </div>
           </div>
           <div className="space-y-4">
-            <RegisterFormV1 />
+            <RegisterForm />
             <p className="text-muted-foreground text-center text-xs font-medium">
               Sudah memiliki akun?{" "}
               <Link href="login" className="text-primary font-semibold">

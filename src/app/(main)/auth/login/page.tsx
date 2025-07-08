@@ -2,11 +2,9 @@ import Link from "next/link";
 
 import { Blocks } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { LoginForm } from "./_components/login-form";
 
-import { LoginFormV1 } from "./_components/login-form";
-
-export default function LoginV1() {
+export default function Login() {
   return (
     <div className="flex h-dvh">
       <div className="bg-primary hidden lg:block lg:w-1/3">
@@ -30,7 +28,7 @@ export default function LoginV1() {
             </div>
           </div>
           <div className="space-y-4">
-            <LoginFormV1 />
+            <LoginForm />
             <p className="text-muted-foreground text-center text-xs font-medium">
               Belum memiliki akun?{" "}
               <Link href="register" className="text-primary font-semibold">

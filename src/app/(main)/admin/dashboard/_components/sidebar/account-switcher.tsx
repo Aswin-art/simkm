@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn, getInitials } from "@/lib/utils";
+import { logoutAction } from "@/actions/auth";
 
 export function AccountSwitcher({
   users,
@@ -53,7 +54,7 @@ export function AccountSwitcher({
           </div>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer">
+        <DropdownMenuItem className="cursor-pointer" onClick={logoutAction}>
           <LogOut />
           Log out
         </DropdownMenuItem>

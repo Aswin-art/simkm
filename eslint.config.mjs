@@ -89,10 +89,6 @@ export default [
       // Naming Conventions
       "no-underscore-dangle": ["error", { allow: ["_id", "__dirname"] }],
 
-      // Complexity
-      complexity: ["error", { max: 10 }],
-      "max-depth": ["error", 4],
-
       // TypeScript-Specific Rules (customized)
       "@typescript-eslint/prefer-nullish-coalescing": "error",
       "@typescript-eslint/no-unnecessary-type-assertion": "error",

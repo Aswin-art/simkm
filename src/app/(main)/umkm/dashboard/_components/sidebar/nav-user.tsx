@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 import { getInitials } from "@/lib/utils";
+import { logoutAction } from "@/actions/auth";
 
 export function NavUser({
   user,
@@ -64,7 +65,7 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="cursor-pointer">
+            <DropdownMenuItem className="cursor-pointer" onClick={logoutAction}>
               <LogOut />
               Log out
             </DropdownMenuItem>
