@@ -1,9 +1,7 @@
 "use server";
 
-import { productFormSchema } from "@/app/(main)/umkm/dashboard/business-management/product-list/create/page";
 import { db } from "@/lib/db";
 import { cookies } from "next/headers";
-import { z } from "zod";
 
 export async function index() {
   const cookieStore = await cookies();
@@ -59,7 +57,24 @@ export async function find(id: string) {
   return { success: true, product };
 }
 
-export async function create(data: z.infer<typeof productFormSchema>) {
+export async function create(data: {
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+
+  rawMaterialCost: number;
+  laborCost: number;
+  overheadCost: number;
+  unitProduced: number;
+  hppPerUnit: number;
+
+  fixedCost: number;
+  pricePerUnit: number;
+  variableCostPerUnit: number;
+  profitMargin: number;
+  bepUnit: number;
+}) {
   const cookieStore = await cookies();
   const userId = cookieStore.get("userId")?.value;
 

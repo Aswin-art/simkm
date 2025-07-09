@@ -26,7 +26,7 @@ import { X } from "lucide-react";
 import Link from "next/link";
 import { create } from "@/actions/products";
 
-export const productFormSchema = z.object({
+const productFormSchema = z.object({
   name: z.string().min(3),
   description: z.string().min(10),
   price: z.number().min(0),
