@@ -31,23 +31,23 @@ export const lastSalesColumns: ColumnDef<z.infer<typeof lastSalesSchema>>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "product_name",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Product Name" />,
-    cell: ({ row }) => <span>{row.original.product_name}</span>,
+    accessorKey: "productName",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Nama Produk" />,
+    cell: ({ row }) => <span>{row.original.productName}</span>,
   },
   {
     accessorKey: "date",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Date" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Tanggal Penjualan" />,
     cell: ({ row }) => <span>{new Date(row.original.date).toLocaleDateString("id-ID")}</span>,
   },
   {
     accessorKey: "quantity",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Quantity" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Jumlah Penjualan" />,
     cell: ({ row }) => <span>{row.original.quantity}</span>,
   },
   {
-    accessorKey: "total_price",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Total Price" />,
-    cell: ({ row }) => <span>Rp {row.original.total_price.toLocaleString("id-ID")}</span>,
+    accessorKey: "totalPrice",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Total Penjualan" />,
+    cell: ({ row }) => <span>Rp {row.original.totalPrice.toLocaleString("id-ID")}</span>,
   },
 ];

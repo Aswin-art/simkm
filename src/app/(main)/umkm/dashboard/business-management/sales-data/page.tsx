@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Plus, Check, ChevronsUpDown } from "lucide-react";
 
 import {
@@ -27,33 +27,63 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 import { DataTable } from "./_components/data-table";
-import data from "./_components/data.json";
-
-const products = [
-  { value: "laptop-gaming", label: "Laptop Gaming ASUS ROG" },
-  { value: "smartphone-iphone", label: "Smartphone iPhone 15" },
-  { value: "headphone-sony", label: "Headphone Sony WH-1000XM5" },
-  { value: "keyboard-mechanical", label: "Keyboard Mechanical Logitech" },
-  { value: "mouse-wireless", label: "Mouse Wireless Logitech MX Master" },
-  { value: "monitor-4k", label: "Monitor 4K Samsung 27 inch" },
-  { value: "webcam-logitech", label: "Webcam Logitech C920" },
-  { value: "tablet-ipad", label: "Tablet iPad Pro 11 inch" },
-];
+import { create, index as getDataSales } from "@/actions/sales";
+import { index as getDataProducts } from "@/actions/products";
+import { Product } from "@prisma/client";
+import { toast } from "sonner";
 
 export default function Page() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isProductOpen, setIsProductOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState("");
-  const [quantity, setQuantity] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const [data, setData] = useState<any>([]);
+  const [products, setProducts] = useState<any>([]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", { selectedProduct, quantity });
+    setIsLoading(true);
+    const response = await create({
+      productName: selectedProduct,
+      quantity: quantity,
+    });
 
-    setSelectedProduct("");
-    setQuantity("");
-    setIsDialogOpen(false);
+    if (response.error) {
+      toast.error(response.error);
+      setIsLoading(false);
+    }
+
+    if (response.success) {
+      toast.success("Berhasil menambahkan produk");
+      setSelectedProduct("");
+      setQuantity(1);
+      setIsDialogOpen(false);
+      setIsLoading(false);
+      window.location.reload();
+    }
   };
+
+  const fetchSalesData = async () => {
+    const response = await getDataSales();
+
+    if (response.success) {
+      setData(response.sales);
+    }
+  };
+
+  const fetchProducts = async () => {
+    const response = await getDataProducts();
+
+    if (response.success) {
+      setProducts(response.data);
+    }
+  };
+
+  useEffect(() => {
+    fetchSalesData();
+    fetchProducts();
+  }, []);
 
   return (
     <div className="flex-1 space-y-4 pt-6">
@@ -98,7 +128,7 @@ export default function Page() {
                       className="w-full justify-between"
                     >
                       {selectedProduct
-                        ? products.find((product) => product.value === selectedProduct)?.label
+                        ? products.find((product: any) => product.name === selectedProduct)?.name
                         : "Pilih produk..."}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -109,10 +139,10 @@ export default function Page() {
                       <CommandList>
                         <CommandEmpty>Tidak ada produk ditemukan.</CommandEmpty>
                         <CommandGroup>
-                          {products.map((product) => (
+                          {products.map((product: Product) => (
                             <CommandItem
-                              key={product.value}
-                              value={product.value}
+                              key={product.id}
+                              value={product.name}
                               onSelect={(currentValue) => {
                                 setSelectedProduct(currentValue === selectedProduct ? "" : currentValue);
                                 setIsProductOpen(false);
@@ -121,10 +151,10 @@ export default function Page() {
                               <Check
                                 className={cn(
                                   "mr-2 h-4 w-4",
-                                  selectedProduct === product.value ? "opacity-100" : "opacity-0",
+                                  selectedProduct === product.name ? "opacity-100" : "opacity-0",
                                 )}
                               />
-                              {product.label}
+                              {product.name}
                             </CommandItem>
                           ))}
                         </CommandGroup>
@@ -135,13 +165,13 @@ export default function Page() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="quantity">Quantity</Label>
+                <Label htmlFor="quantity">Jumlah</Label>
                 <Input
                   id="quantity"
                   type="number"
                   placeholder="Masukkan jumlah"
                   value={quantity}
-                  onChange={(e) => setQuantity(e.target.value)}
+                  onChange={(e) => setQuantity(Number(e.target.value))}
                   min="1"
                   required
                 />
@@ -159,9 +189,9 @@ export default function Page() {
                 <Button
                   type="submit"
                   className="bg-primary hover:bg-primary/80 cursor-pointer"
-                  disabled={!selectedProduct || !quantity}
+                  disabled={!selectedProduct || !quantity || isLoading}
                 >
-                  Simpan
+                  {isLoading ? "Loading..." : "Simpan"}
                 </Button>
               </div>
             </form>
@@ -170,7 +200,7 @@ export default function Page() {
       </div>
 
       <Separator />
-      <DataTable data={data} />
+      <DataTable />
     </div>
   );
 }

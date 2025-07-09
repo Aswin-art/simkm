@@ -1,11 +1,11 @@
 import { z } from "zod";
 
 export const lastSalesSchema = z.object({
-  id: z.number(),
-  product_name: z.string(),
+  id: z.string(),
+  productName: z.string(),
   date: z.string(),
   quantity: z.number(),
-  total_price: z.number(),
+  totalPrice: z.number(),
 });
 
 export const productListSchema = z.object({

@@ -22,10 +22,29 @@ export async function index() {
     },
   });
 
-  return { success: true, sales };
+  const convertedSales = sales.map((sale) => ({
+    ...sale,
+    totalPrice: Number(sale.totalPrice),
+    product: {
+      ...sale.product,
+      price: Number(sale.product.price),
+      rawMaterialCost: Number(sale.product.rawMaterialCost),
+      laborCost: Number(sale.product.laborCost),
+      overheadCost: Number(sale.product.overheadCost),
+      totalCost: Number(sale.product.totalCost),
+      hppPerUnit: Number(sale.product.hppPerUnit),
+      fixedCost: Number(sale.product.fixedCost),
+      variableCostPerUnit: Number(sale.product.variableCostPerUnit),
+      pricePerUnit: Number(sale.product.pricePerUnit),
+      profitMargin: Number(sale.product.profitMargin),
+      bepUnit: Number(sale.product.bepUnit),
+    },
+  }));
+
+  return { success: true, sales: convertedSales };
 }
 
-export async function create(data: { productId: string; quantity: number; totalPrice: number }) {
+export async function create(data: { productName: string; quantity: number }) {
   const cookieStore = await cookies();
   const userId = cookieStore.get("userId")?.value;
 
@@ -34,24 +53,26 @@ export async function create(data: { productId: string; quantity: number; totalP
   }
 
   const product = await db.product.findFirst({
-    where: { id: data.productId, userId },
-    select: { id: true },
+    where: { name: data.productName, userId },
+    select: { id: true, price: true },
   });
 
   if (!product) {
     return { error: "Produk tidak ditemukan" };
   }
 
-  const sale = await db.sale.create({
+  const totalPrice = Number(product.price) * data.quantity;
+
+  await db.sale.create({
     data: {
-      productId: data.productId,
+      productId: product.id,
       quantity: data.quantity,
       date: new Date(),
-      totalPrice: data.totalPrice,
+      totalPrice,
     },
   });
 
-  return { success: true, sale };
+  return { success: true };
 }
 
 export async function remove(id: string) {

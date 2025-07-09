@@ -10,6 +10,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { loginAction } from "@/actions/auth";
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 export const FormSchema = z.object({
   email: z.string().email({ message: "Silakan masukkan alamat email yang valid." }),
@@ -28,6 +30,7 @@ export function LoginForm() {
   });
 
   const isLoading = form.formState.isSubmitting;
+  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
     const res = await loginAction(data);
@@ -60,13 +63,24 @@ export function LoginForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  autoComplete="current-password"
-                  {...field}
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    autoComplete="new-password"
+                    {...field}
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="text-muted-foreground hover:text-primary absolute top-1/2 right-2 -translate-y-1/2"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>

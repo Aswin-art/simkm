@@ -33,23 +33,23 @@ export const dashboardColumns: ColumnDef<z.infer<typeof sectionSchema>>[] = [
   },
   {
     accessorKey: "product_name",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Product Name" />,
-    cell: ({ row }) => <span>{row.original.product_name}</span>,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Nama Produk" />,
+    cell: ({ row }) => <span>{row.original.product.name}</span>,
   },
   {
     accessorKey: "date",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Date" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Tanggal Penjualan" />,
     cell: ({ row }) => <span>{new Date(row.original.date).toLocaleDateString("id-ID")}</span>,
   },
   {
     accessorKey: "quantity",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Quantity" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Jumlah" />,
     cell: ({ row }) => <span>{row.original.quantity}</span>,
   },
   {
-    accessorKey: "total_price",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Total Price" />,
-    cell: ({ row }) => <span>Rp {row.original.total_price.toLocaleString("id-ID")}</span>,
+    accessorKey: "totalPrice",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Total Pembelian" />,
+    cell: ({ row }) => <span>Rp {row.original.totalPrice.toLocaleString("id-ID")}</span>,
   },
   {
     id: "actions",
