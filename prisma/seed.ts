@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
+import { subMonths, addDays, startOfMonth } from "date-fns";
 
 const prisma = new PrismaClient();
 
@@ -12,6 +13,7 @@ async function main() {
   const passwordAdmin = await bcrypt.hash("password", 10);
   const passwordUmkm = await bcrypt.hash("password", 10);
 
+  console.log("👤 Membuat user...");
   await prisma.user.create({
     data: {
       name: "Admin SIMKM",
@@ -34,39 +36,54 @@ async function main() {
     },
   });
 
-  const product = await prisma.product.create({
-    data: {
-      user: {
-        connect: { id: umkm.id },
-      },
-      name: "Kopi Tubruk",
-      description: "Kopi lokal asli Indonesia",
-      image: "https://example.com/image.jpg",
-      price: 25000,
-      rawMaterialCost: 8000,
-      laborCost: 3000,
-      overheadCost: 2000,
-      totalCost: 13000,
-      unitProduced: 100,
-      hppPerUnit: 13000,
-      fixedCost: 200000,
-      variableCostPerUnit: 13000,
-      pricePerUnit: 25000,
-      profitMargin: 20,
-      bepUnit: 20,
-    },
-  });
+  console.log("📦 Membuat 5 produk...");
+  const products = [];
 
-  await prisma.sale.create({
-    data: {
-      product: {
-        connect: { id: product.id },
+  for (let i = 1; i <= 5; i++) {
+    const product = await prisma.product.create({
+      data: {
+        userId: umkm.id,
+        name: `Produk ${i}`,
+        description: `Deskripsi produk ${i}`,
+        image: `https://via.placeholder.com/150?text=Produk+${i}`,
+        price: 20000 + i * 1000,
+        rawMaterialCost: 8000,
+        laborCost: 3000,
+        overheadCost: 2000,
+        totalCost: 13000,
+        unitProduced: 100,
+        hppPerUnit: 13000,
+        fixedCost: 200000,
+        variableCostPerUnit: 13000,
+        pricePerUnit: 20000 + i * 1000,
+        profitMargin: 20,
+        bepUnit: 20,
+        createdAt: new Date(`2025-06-${(10 + i).toString().padStart(2, "0")}`),
       },
-      date: new Date("2025-07-01"),
-      quantity: 10,
-      totalPrice: 250000,
-    },
-  });
+    });
+    products.push(product);
+  }
+
+  console.log("🧾 Membuat 50 data penjualan...");
+  const today = new Date();
+  const lastMonth = startOfMonth(subMonths(today, 1));
+
+  for (let i = 0; i < 50; i++) {
+    const randomProduct = products[Math.floor(Math.random() * products.length)];
+    const randomDays = Math.floor(Math.random() * 60);
+    const saleDate = addDays(lastMonth, randomDays);
+    const quantity = Math.floor(Math.random() * 10) + 1;
+    const totalPrice = quantity * Number(randomProduct.price);
+
+    await prisma.sale.create({
+      data: {
+        productId: randomProduct.id,
+        date: saleDate,
+        quantity,
+        totalPrice,
+      },
+    });
+  }
 
   console.log("✅ Seeder berhasil dijalankan.");
 }

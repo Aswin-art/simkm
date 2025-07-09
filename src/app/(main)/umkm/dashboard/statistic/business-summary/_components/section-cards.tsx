@@ -29,7 +29,8 @@ export function SectionCards({
               )}
               {data.totalSales.status === "down" && (
                 <>
-                  <TrendingDown className="mr-1" />-{data.totalSales.percentage}%
+                  <TrendingDown className="mr-1" />
+                  {data.totalSales.percentage}%
                 </>
               )}
               {data.totalSales.status === "neutral" && (
@@ -43,12 +44,12 @@ export function SectionCards({
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            {data.totalSales.message === "up" && (
+            {data.totalSales.status === "up" && (
               <>
                 Meningkat bulan ini <TrendingUp className="size-4" />
               </>
             )}
-            {data.totalSales.message === "down" && (
+            {data.totalSales.status === "down" && (
               <>
                 Menurun bulan ini <TrendingDown className="size-4" />
               </>
@@ -72,7 +73,8 @@ export function SectionCards({
             <Badge variant="outline">
               {data.newProducts.status === "down" && (
                 <>
-                  <TrendingDown />-{data.newProducts.percentage}%
+                  <TrendingDown />
+                  {data.newProducts.percentage}%
                 </>
               )}
               {data.newProducts.status === "up" && (
@@ -91,12 +93,12 @@ export function SectionCards({
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            {data.newProducts.message === "up" && (
+            {data.newProducts.status === "up" && (
               <>
                 Meningkat bulan ini <TrendingUp className="size-4" />
               </>
             )}
-            {data.newProducts.message === "down" && (
+            {data.newProducts.status === "down" && (
               <>
                 Menurun bulan ini <TrendingDown className="size-4" />
               </>
@@ -120,7 +122,8 @@ export function SectionCards({
             <Badge variant="outline">
               {data.growthRate.status === "down" && (
                 <>
-                  <TrendingDown />-{data.growthRate.percentage}%
+                  <TrendingDown />
+                  {data.growthRate.percentage}%
                 </>
               )}
               {data.growthRate.status === "up" && (
@@ -139,12 +142,12 @@ export function SectionCards({
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            {data.growthRate.message === "up" && (
+            {data.growthRate.status === "up" && (
               <>
                 Meningkat bulan ini <TrendingUp className="size-4" />
               </>
             )}
-            {data.growthRate.message === "down" && (
+            {data.growthRate.status === "down" && (
               <>
                 Menurun bulan ini <TrendingDown className="size-4" />
               </>
