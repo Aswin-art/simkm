@@ -67,7 +67,6 @@ export default [
       "import/no-mutable-exports": "error",
       "import/newline-after-import": "error",
       "no-duplicate-imports": ["error", { includeExports: true }],
-      "import/no-cycle": ["error", { maxDepth: 2 }],
 
       // Whitespace and Punctuation (Style Rules)
       "no-trailing-spaces": "error",
@@ -85,9 +84,6 @@ export default [
       "object-curly-spacing": ["error", "always"],
       "func-call-spacing": ["error", "never"],
       "computed-property-spacing": ["error", "never"],
-
-      // Naming Conventions
-      "no-underscore-dangle": ["error", { allow: ["_id", "__dirname"] }],
 
       // TypeScript-Specific Rules (customized)
       "@typescript-eslint/prefer-nullish-coalescing": "error",

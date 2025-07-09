@@ -5,7 +5,6 @@ import { DataTableColumnHeader } from "@/components/data-table/data-table-column
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { sectionSchema } from "./schema";
-import { TableCellViewer } from "./table-cell-viewer";
 import { CellAction } from "./cell-action";
 
 export const dashboardColumns: ColumnDef<z.infer<typeof sectionSchema>>[] = [
@@ -34,12 +33,12 @@ export const dashboardColumns: ColumnDef<z.infer<typeof sectionSchema>>[] = [
   },
   {
     accessorKey: "name",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Product Name" />,
-    cell: ({ row }) => <TableCellViewer item={row.original} />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Nama Produk" />,
+    cell: ({ row }) => <span>{row.original.name}</span>,
   },
   {
     accessorKey: "description",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Description" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Deskripsi" />,
     cell: ({ row }) => (
       <span>
         {row.original.description.length > 100
@@ -51,18 +50,33 @@ export const dashboardColumns: ColumnDef<z.infer<typeof sectionSchema>>[] = [
   },
   {
     accessorKey: "price",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Price" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Harga" />,
     cell: ({ row }) => <span>Rp {row.original.price.toLocaleString()}</span>,
+  },
+  {
+    accessorKey: "totalCost",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Biaya Pembuatan" />,
+    cell: ({ row }) => <span>Rp {row.original.totalCost}</span>,
+  },
+  {
+    accessorKey: "profitMargin",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Profit / Margin" />,
+    cell: ({ row }) => <span>{row.original.profitMargin}%</span>,
   },
   {
     accessorKey: "hpp",
     header: ({ column }) => <DataTableColumnHeader column={column} title="HPP" />,
-    cell: ({ row }) => <span>Rp {row.original.hpp.toLocaleString()}</span>,
+    cell: ({ row }) => <span>Rp. {row.original.hpp.toLocaleString()}/unit</span>,
   },
   {
     accessorKey: "bep",
     header: ({ column }) => <DataTableColumnHeader column={column} title="BEP" />,
-    cell: ({ row }) => <span>Rp {row.original.bep.toLocaleString()}</span>,
+    cell: ({ row }) => <span>{row.original.bep.toLocaleString()} unit</span>,
+  },
+  {
+    accessorKey: "totalSales",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Total Penjualan" />,
+    cell: ({ row }) => <span>{row.original.totalSales}</span>,
   },
   {
     id: "actions",

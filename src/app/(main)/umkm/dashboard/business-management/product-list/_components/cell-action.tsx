@@ -11,35 +11,32 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as z from "zod";
 import { Trash } from "lucide-react";
 import { toast } from "sonner";
 import { sectionSchema } from "./schema";
+import { remove } from "@/actions/products";
 
 export const CellAction = ({ item }: { item: z.infer<typeof sectionSchema> }) => {
   const [openDelete, setOpenDelete] = useState(false);
-  const queryClient = useQueryClient();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const deleteMutation = useMutation({
-    mutationFn: async () => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/facilities/${item.id}`, {
-        method: "DELETE",
-      });
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["get-facilities"],
-      });
+  const handleDelete = async () => {
+    setIsLoading(true);
+    const response = await remove(item.id);
+
+    if (response.error) {
+      toast.error(response.error);
+      setIsLoading(false);
+    }
+
+    if (response.success) {
+      toast.success("Produk berhasil dihapus");
       setOpenDelete(false);
-      toast.success("Data berhasil dihapus!");
-    },
-    onError: () => {
-      setOpenDelete(false);
-      toast.error("Data gagal dihapus!");
-    },
-  });
+      setIsLoading(false);
+      window.location.reload();
+    }
+  };
 
   return (
     <>
@@ -50,15 +47,15 @@ export const CellAction = ({ item }: { item: z.infer<typeof sectionSchema> }) =>
             <AlertDialogDescription>Tindakan ini tidak dapat dibatalkan.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleteMutation.isPending} className="cursor-pointer">
+            <AlertDialogCancel disabled={isLoading} className="cursor-pointer">
               Batal
             </AlertDialogCancel>
             <AlertDialogAction
-              disabled={deleteMutation.isPending}
+              disabled={isLoading}
               className="cursor-pointer bg-red-500 hover:bg-red-600"
-              onClick={() => deleteMutation.mutate()}
+              onClick={() => handleDelete()}
             >
-              {deleteMutation.isPending ? "Loading..." : "Hapus"}
+              {isLoading ? "Loading..." : "Hapus"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

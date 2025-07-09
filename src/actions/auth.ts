@@ -11,18 +11,24 @@ export async function loginAction(data: { email: string; password: string; remem
   const user = await db.user.findUnique({ where: { email } });
 
   if (!user) {
-    return { error: "Email tidak ditemukan" };
+    return { error: "Email atau password salah" };
   }
 
   const valid = await bcrypt.compare(password, user.password);
   if (!valid) {
-    return { error: "Password salah" };
+    return { error: "Email atau password salah" };
   }
 
   const cookieStore = await cookies();
   const fakeToken = `${user.id}-${Date.now()}`;
 
   cookieStore.set("auth-token", fakeToken, {
+    httpOnly: true,
+    path: "/",
+    secure: true,
+  });
+
+  cookieStore.set("userId", user.id, {
     httpOnly: true,
     path: "/",
     secure: true,
@@ -78,6 +84,12 @@ export async function registerAction(data: {
     secure: true,
   });
 
+  cookieStore.set("userId", newUser.id, {
+    httpOnly: true,
+    path: "/",
+    secure: true,
+  });
+
   cookieStore.set("role", newUser.role, {
     httpOnly: true,
     path: "/",
@@ -91,6 +103,7 @@ export async function logoutAction() {
   const cookieStore = await cookies();
 
   cookieStore.set("auth-token", "", { path: "/", maxAge: 0 });
+  cookieStore.set("userId", "", { path: "/", maxAge: 0 });
   cookieStore.set("role", "", { path: "/", maxAge: 0 });
 
   redirect("/auth/login");

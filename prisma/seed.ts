@@ -41,6 +41,7 @@ async function main() {
       },
       name: "Kopi Tubruk",
       description: "Kopi lokal asli Indonesia",
+      image: "https://example.com/image.jpg",
       price: 25000,
       rawMaterialCost: 8000,
       laborCost: 3000,

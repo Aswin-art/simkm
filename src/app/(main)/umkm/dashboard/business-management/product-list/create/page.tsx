@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { Separator } from "@/components/ui/separator";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -18,86 +18,80 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { UploadDropzone } from "@/lib/uploadthing";
 import { X } from "lucide-react";
 import Link from "next/link";
+import { create } from "@/actions/products";
 
-const formSchema = z.object({
-  name: z.string().min(3, { message: "Nama produk minimal 3 karakter." }),
-  description: z.string().min(10, { message: "Deskripsi minimal 10 karakter." }),
-  price: z.number().min(0, { message: "Harga harus lebih dari 0." }),
-  image: z.string({ required_error: "Harap upload gambar produk." }),
+export const productFormSchema = z.object({
+  name: z.string().min(3),
+  description: z.string().min(10),
+  price: z.number().min(0),
+  image: z.string().url(),
 
-  hpp: z.object({
-    biayaBahanBaku: z.number().min(0, { message: "Biaya bahan baku harus lebih dari 0." }),
-    biayaTenagaKerja: z.number().min(0, { message: "Biaya tenaga kerja harus lebih dari 0." }),
-    biayaLainLain: z.number().min(0, { message: "Biaya lain-lain harus lebih dari 0." }),
-    jumlahUnitProduksi: z.number().min(1, { message: "Jumlah unit produksi minimal 1." }),
-  }),
+  rawMaterialCost: z.number().min(0),
+  laborCost: z.number().min(0),
+  overheadCost: z.number().min(0),
+  unitProduced: z.number().min(1),
+  hppPerUnit: z.number().min(0),
 
-  bep: z.object({
-    biayaTetap: z.number().min(0, { message: "Biaya tetap harus lebih dari 0." }),
-    biayaJualPerUnit: z.number().min(0, { message: "Biaya jual per unit harus lebih dari 0." }),
-    biayaVariabelPerUnit: z.number().min(0, { message: "Biaya variabel per unit harus lebih dari 0." }),
-    marginKeuntungan: z.number().min(0, { message: "Margin keuntungan harus lebih dari 0." }),
-  }),
+  fixedCost: z.number().min(0),
+  pricePerUnit: z.number().min(0),
+  variableCostPerUnit: z.number().min(0),
+  profitMargin: z.number().min(0),
+  bepUnit: z.number().min(0),
 });
 
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof productFormSchema>;
 
 const Page = () => {
   const router = useRouter();
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(productFormSchema),
     defaultValues: {
       name: "",
       description: "",
       price: 0,
       image: "",
-      hpp: {
-        biayaBahanBaku: 0,
-        biayaTenagaKerja: 0,
-        biayaLainLain: 0,
-        jumlahUnitProduksi: 1,
-      },
-      bep: {
-        biayaTetap: 0,
-        biayaJualPerUnit: 0,
-        biayaVariabelPerUnit: 0,
-        marginKeuntungan: 0,
-      },
+
+      rawMaterialCost: 0,
+      laborCost: 0,
+      overheadCost: 0,
+      unitProduced: 1,
+      hppPerUnit: 0,
+
+      fixedCost: 0,
+      pricePerUnit: 0,
+      variableCostPerUnit: 0,
+      profitMargin: 0,
+      bepUnit: 0,
     },
   });
 
-  async function addProduct(data: FormValues) {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_API_URL}/api/products`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) throw new Error("Failed to add product");
-    return res.json();
-  }
+  const onSubmit = async (values: any) => {
+    const hppPerUnit = (values.rawMaterialCost + values.laborCost + values.overheadCost) / values.unitProduced;
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: addProduct,
-    onSuccess: () => {
+    const bepUnit = values.fixedCost / (values.pricePerUnit - values.variableCostPerUnit);
+
+    const finalData = {
+      ...values,
+      hppPerUnit,
+      bepUnit,
+    };
+
+    const result = await create(finalData);
+
+    if (result.error) {
+      toast.error(result.error);
+    } else {
       toast.success("Produk berhasil ditambahkan!");
       form.reset();
-      router.push("/dashboards/products");
-    },
-    onError: () => {
-      toast.error("Gagal menambahkan produk. Tolong coba lagi.");
-    },
-  });
-
-  const onSubmit = (values: FormValues) => {
-    mutate(values);
+      router.push("/umkm/dashboard/business-management/product-list");
+    }
   };
 
   return (
@@ -131,7 +125,6 @@ const Page = () => {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="mb-28 space-y-6">
-            {/* Image Upload */}
             <FormField
               control={form.control}
               name="image"
@@ -146,11 +139,10 @@ const Page = () => {
                         <div className="relative h-[500px] w-full">
                           <Image src={field.value} alt="product image" className="object-contain" loading="lazy" fill />
                         </div>
-
                         <Button
-                          variant={"ghost"}
-                          type="button"
                           className="cursor-pointer"
+                          variant="ghost"
+                          type="button"
                           onClick={() => form.setValue("image", "")}
                         >
                           <X className="h-4 w-4" /> Hapus
@@ -160,10 +152,8 @@ const Page = () => {
                       <UploadDropzone
                         disabled={form.formState.isSubmitting}
                         endpoint="images"
-                        className="relative h-[500px] w-full"
-                        onClientUploadComplete={(res) => {
-                          form.setValue("image", res[0].url);
-                        }}
+                        className="relative h-[500px] w-full cursor-pointer"
+                        onClientUploadComplete={(res) => form.setValue("image", res[0].url)}
                         onUploadError={(error) => console.error("Upload error:", error)}
                       />
                     )}
@@ -173,9 +163,7 @@ const Page = () => {
               )}
             />
 
-            {/* Basic Product Info */}
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-              {/* Name */}
               <FormField
                 control={form.control}
                 name="name"
@@ -192,7 +180,6 @@ const Page = () => {
                 )}
               />
 
-              {/* Price */}
               <FormField
                 control={form.control}
                 name="price"
@@ -215,7 +202,6 @@ const Page = () => {
                 )}
               />
 
-              {/* Description */}
               <FormField
                 control={form.control}
                 name="description"
@@ -238,7 +224,6 @@ const Page = () => {
               />
             </div>
 
-            {/* HPP Section */}
             <Card>
               <CardHeader>
                 <CardTitle>Harga Pokok Produksi (HPP)</CardTitle>
@@ -246,92 +231,53 @@ const Page = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                  {/* Biaya Bahan Baku */}
                   <FormField
                     control={form.control}
-                    name="hpp.biayaBahanBaku"
+                    name="rawMaterialCost"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          Biaya Bahan Baku <span className="text-red-500">*</span>
-                        </FormLabel>
+                        <FormLabel>Biaya Bahan Baku</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            disabled={form.formState.isSubmitting}
-                            placeholder="Masukkan biaya bahan baku"
-                            {...field}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
-                          />
+                          <Input type="number" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-
-                  {/* Biaya Tenaga Kerja */}
                   <FormField
                     control={form.control}
-                    name="hpp.biayaTenagaKerja"
+                    name="laborCost"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          Biaya Tenaga Kerja <span className="text-red-500">*</span>
-                        </FormLabel>
+                        <FormLabel>Biaya Tenaga Kerja</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            disabled={form.formState.isSubmitting}
-                            placeholder="Masukkan biaya tenaga kerja"
-                            {...field}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
-                          />
+                          <Input type="number" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-
-                  {/* Biaya Lain-lain */}
                   <FormField
                     control={form.control}
-                    name="hpp.biayaLainLain"
+                    name="overheadCost"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          Biaya Lain-lain <span className="text-red-500">*</span>
-                        </FormLabel>
+                        <FormLabel>Biaya Lain-lain</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            disabled={form.formState.isSubmitting}
-                            placeholder="Masukkan biaya lain-lain"
-                            {...field}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
-                          />
+                          <Input type="number" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-
-                  {/* Jumlah Unit Produksi */}
                   <FormField
                     control={form.control}
-                    name="hpp.jumlahUnitProduksi"
+                    name="unitProduced"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          Jumlah Unit Produksi <span className="text-red-500">*</span>
-                        </FormLabel>
+                        <FormLabel>Jumlah Unit Produksi</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            disabled={form.formState.isSubmitting}
-                            placeholder="Masukkan jumlah unit produksi"
-                            {...field}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
-                          />
+                          <Input type="number" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -341,7 +287,6 @@ const Page = () => {
               </CardContent>
             </Card>
 
-            {/* BEP Section */}
             <Card>
               <CardHeader>
                 <CardTitle>Break Even Point (BEP)</CardTitle>
@@ -349,92 +294,53 @@ const Page = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                  {/* Biaya Tetap */}
                   <FormField
                     control={form.control}
-                    name="bep.biayaTetap"
+                    name="fixedCost"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          Biaya Tetap <span className="text-red-500">*</span>
-                        </FormLabel>
+                        <FormLabel>Biaya Tetap</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            disabled={form.formState.isSubmitting}
-                            placeholder="Masukkan biaya tetap"
-                            {...field}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
-                          />
+                          <Input type="number" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-
-                  {/* Biaya Jual Per Unit */}
                   <FormField
                     control={form.control}
-                    name="bep.biayaJualPerUnit"
+                    name="pricePerUnit"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          Biaya Jual Per Unit <span className="text-red-500">*</span>
-                        </FormLabel>
+                        <FormLabel>Harga Jual Per Unit</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            disabled={form.formState.isSubmitting}
-                            placeholder="Masukkan biaya jual per unit"
-                            {...field}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
-                          />
+                          <Input type="number" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-
-                  {/* Biaya Variabel Per Unit */}
                   <FormField
                     control={form.control}
-                    name="bep.biayaVariabelPerUnit"
+                    name="variableCostPerUnit"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          Biaya Variabel Per Unit <span className="text-red-500">*</span>
-                        </FormLabel>
+                        <FormLabel>Biaya Variabel Per Unit</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            disabled={form.formState.isSubmitting}
-                            placeholder="Masukkan biaya variabel per unit"
-                            {...field}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
-                          />
+                          <Input type="number" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-
-                  {/* Margin Keuntungan */}
                   <FormField
                     control={form.control}
-                    name="bep.marginKeuntungan"
+                    name="profitMargin"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          Margin Keuntungan <span className="text-red-500">*</span>
-                        </FormLabel>
+                        <FormLabel>Margin Keuntungan</FormLabel>
                         <FormControl>
-                          <Input
-                            type="number"
-                            disabled={form.formState.isSubmitting}
-                            placeholder="Masukkan margin keuntungan"
-                            {...field}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
-                          />
+                          <Input type="number" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -446,15 +352,13 @@ const Page = () => {
 
             <div className="flex gap-2">
               <Link
-                href={"/umkm/dashboard/business-management/product-list"}
-                className={buttonVariants({
-                  variant: "ghost",
-                })}
+                href="/umkm/dashboard/business-management/product-list"
+                className={buttonVariants({ variant: "ghost" })}
               >
                 Kembali
               </Link>
-              <Button type="submit" disabled={isPending} className="bg-primary cursor-pointer">
-                {isPending ? "Loading..." : "Tambah Produk"}
+              <Button type="submit" disabled={form.formState.isSubmitting} className="bg-primary cursor-pointer">
+                {form.formState.isSubmitting ? "Loading..." : "Tambah Produk"}
               </Button>
             </div>
           </form>

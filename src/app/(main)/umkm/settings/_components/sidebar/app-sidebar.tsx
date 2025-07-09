@@ -1,6 +1,6 @@
 "use client";
 
-import { Settings, CircleHelp, Search, Database, ClipboardList, File, Blocks } from "lucide-react";
+import { Blocks } from "lucide-react";
 
 import {
   Sidebar,
@@ -12,50 +12,30 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { APP_CONFIG } from "@/config/app-config";
-import { rootUser } from "@/data/users";
 import { umkmSidebarItems } from "@/navigation/sidebar/sidebar-items";
 
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
-
-const data = {
-  navSecondary: [
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings,
-    },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: CircleHelp,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: Search,
-    },
-  ],
-  documents: [
-    {
-      name: "Data Library",
-      url: "#",
-      icon: Database,
-    },
-    {
-      name: "Reports",
-      url: "#",
-      icon: ClipboardList,
-    },
-    {
-      name: "Word Assistant",
-      url: "#",
-      icon: File,
-    },
-  ],
-};
+import { useCallback, useEffect, useState } from "react";
+import { getCurrentUser } from "@/actions/users";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [user, setUser] = useState<any>(null);
+  const handleFetchUser = useCallback(async () => {
+    try {
+      const response = await getCurrentUser();
+
+      if (response.success) {
+        setUser(response.data);
+      }
+    } catch (error) {
+      console.error("Error in AppSidebar:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    handleFetchUser();
+  }, [handleFetchUser]);
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -72,11 +52,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={umkmSidebarItems} />
-        {/* <NavDocuments items={data.documents} /> */}
-        {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={rootUser} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   );
