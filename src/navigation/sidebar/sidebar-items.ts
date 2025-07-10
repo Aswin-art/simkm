@@ -47,10 +47,7 @@ export const adminSidebarItems: NavGroup[] = [
         title: "Analisa Statistik",
         url: "/admin/dashboard/statistic",
         icon: Home,
-        subItems: [
-          { title: "Analisa UMKM", url: "/admin/dashboard/statistic/umkm-analytic", icon: ChartPie },
-          { title: "Pertumbuhan", url: "/admin/dashboard/statistic/umkm-growth", icon: ChartLine },
-        ],
+        subItems: [{ title: "Analisa UMKM", url: "/admin/dashboard/statistic/umkm-analytic", icon: ChartPie }],
       },
       {
         title: "Data UMKM",

@@ -1,6 +1,5 @@
 "use client";
-import React, { useState } from "react";
-import { Plus, Check, ChevronsUpDown } from "lucide-react";
+import React from "react";
 
 import {
   Breadcrumb,
@@ -10,35 +9,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
 
 import { DataTable } from "./_components/data-table";
 import data from "./_components/data.json";
-
-const products = [
-  { value: "laptop-gaming", label: "Laptop Gaming ASUS ROG" },
-  { value: "smartphone-iphone", label: "Smartphone iPhone 15" },
-  { value: "headphone-sony", label: "Headphone Sony WH-1000XM5" },
-  { value: "keyboard-mechanical", label: "Keyboard Mechanical Logitech" },
-  { value: "mouse-wireless", label: "Mouse Wireless Logitech MX Master" },
-  { value: "monitor-4k", label: "Monitor 4K Samsung 27 inch" },
-  { value: "webcam-logitech", label: "Webcam Logitech C920" },
-  { value: "tablet-ipad", label: "Tablet iPad Pro 11 inch" },
-];
 
 export default function Page() {
   return (
@@ -62,7 +36,7 @@ export default function Page() {
       </div>
 
       <Separator />
-      <DataTable data={data} />
+      <DataTable />
     </div>
   );
 }

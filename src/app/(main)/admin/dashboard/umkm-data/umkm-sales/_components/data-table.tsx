@@ -1,8 +1,6 @@
 "use client";
 
-import * as React from "react";
-
-import { z } from "zod";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { DataTable as ListSales } from "@/components/user-sales-table/data-table";
 import { DataTablePagination } from "@/components/user-sales-table/data-table-pagination";
@@ -10,12 +8,44 @@ import { withDndColumn } from "@/components/user-sales-table/table-utils";
 import { useDataTableInstance } from "@/hooks/use-data-table-instance";
 
 import { dashboardColumns } from "./columns";
-import { sectionSchema } from "./schema";
+import { getAllUmkmSales } from "@/actions/sales";
 
-export function DataTable({ data: initialData }: { data: z.infer<typeof sectionSchema>[] }) {
-  const [data, setData] = React.useState(() => initialData);
+export function DataTable() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = React.useState<any>([]);
   const columns = withDndColumn(dashboardColumns);
   const table = useDataTableInstance({ data, columns, getRowId: (row) => row.id.toString() });
+  console.log(data);
+
+  const handleFetchData = useCallback(async () => {
+    const response = await getAllUmkmSales();
+
+    if (response.success) {
+      setData(response.data);
+    }
+
+    setIsLoading(false);
+  }, []);
+
+  useEffect(() => {
+    handleFetchData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-64 items-center justify-center rounded-lg border">
+        <span className="text-muted-foreground text-sm">Loading data...</span>
+      </div>
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <div className="flex h-64 items-center justify-center rounded-lg border">
+        <span className="text-muted-foreground text-sm">Tidak ada data.</span>
+      </div>
+    );
+  }
 
   return (
     <div className="relative flex flex-col gap-4 overflow-auto">

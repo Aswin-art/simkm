@@ -12,12 +12,11 @@ import { getAllUmkmUser } from "@/actions/users";
 
 export function DataTable() {
   const [data, setData] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true); // <--- Tambah state loading
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const columns = withDndColumn(dashboardColumns);
   const table = useDataTableInstance({ data, columns, getRowId: (row) => row.id.toString() });
 
   const handleFetchData = useCallback(async () => {
-    setIsLoading(true);
     const response = await getAllUmkmUser();
 
     if (response.success) {

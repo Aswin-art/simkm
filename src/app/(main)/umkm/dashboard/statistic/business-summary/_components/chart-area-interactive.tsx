@@ -90,8 +90,8 @@ export function ChartAreaInteractive({ data }: { data: { date: string; total: nu
             <AreaChart data={filteredData}>
               <defs>
                 <linearGradient id="fillTotal" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="var(--chart-1)" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="var(--chart-1)" stopOpacity={0.1} />
+                  <stop offset="5%" stopColor="var(--chart-2)" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="var(--chart-2)" stopOpacity={0.1} />
                 </linearGradient>
               </defs>
               <CartesianGrid vertical={false} />
@@ -128,7 +128,7 @@ export function ChartAreaInteractive({ data }: { data: { date: string; total: nu
                 dataKey="total"
                 type="monotone"
                 fill="url(#fillTotal)"
-                stroke="var(--chart-1)"
+                stroke="var(--chart-2)"
                 strokeWidth={2}
                 dot={false}
               />

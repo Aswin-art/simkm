@@ -2,7 +2,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { z } from "zod";
 
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
-import { Checkbox } from "@/components/ui/checkbox";
 import { sectionSchema } from "./schema";
 import Image from "next/image";
 
