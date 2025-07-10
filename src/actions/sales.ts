@@ -20,6 +20,7 @@ export async function index() {
     include: {
       product: true,
     },
+    orderBy: { createdAt: "desc" },
   });
 
   const convertedSales = sales.map((sale) => ({

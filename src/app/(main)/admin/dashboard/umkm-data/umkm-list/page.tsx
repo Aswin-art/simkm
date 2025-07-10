@@ -11,7 +11,6 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 import { DataTable } from "./_components/data-table";
-import data from "./_components/data.json";
 
 export default function Page() {
   return (
@@ -33,7 +32,7 @@ export default function Page() {
         </div>
       </div>
       <Separator />
-      <DataTable data={data} />
+      <DataTable />
     </div>
   );
 }

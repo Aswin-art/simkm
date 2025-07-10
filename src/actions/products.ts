@@ -18,6 +18,7 @@ export async function index() {
         select: { sales: true },
       },
     },
+    orderBy: { createdAt: "desc" },
   });
 
   const plainProducts = products.map((p) => ({

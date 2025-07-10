@@ -59,10 +59,23 @@ export const dashboardColumns: ColumnDef<z.infer<typeof sectionSchema>>[] = [
     enableSorting: false,
   },
   {
-    accessorKey: "created_at",
+    accessorKey: "monthlySales",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Pendapatan Bulan Ini" />,
+    cell: ({ row }) => <span>Rp. {row.original.monthlySales.toLocaleString()}</span>,
+    enableSorting: false,
+  },
+  {
+    accessorKey: "totalSales",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Total Pendapatan" />,
+    cell: ({ row }) => <span>Rp. {row.original.totalSales.toLocaleString()}</span>,
+    enableSorting: false,
+  },
+  {
+    accessorKey: "createdAt",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Tanggal Bergabung" />,
     cell: ({ row }) => {
-      const date = new Date(row.original.created_at);
+      console.log(row.original);
+      const date = new Date(row.original.createdAt);
       return (
         <span>
           {date.toLocaleDateString("id-ID", {
