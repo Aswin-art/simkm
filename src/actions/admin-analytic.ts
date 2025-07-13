@@ -4,15 +4,16 @@ import { db } from "@/lib/db";
 import { subMonths, startOfDay } from "date-fns";
 
 export async function getAdminDashboardAnalytics() {
-  const threeMonthsAgo = subMonths(new Date(), 3);
-  const twoMonthsAgo = subMonths(new Date(), 2);
-  const oneMonthAgo = subMonths(new Date(), 1);
+  const now = new Date();
+  const threeMonthsAgo = startOfDay(subMonths(now, 3));
+  const twoMonthsAgo = startOfDay(subMonths(now, 2));
+  const oneMonthAgo = startOfDay(subMonths(now, 1));
 
   // === Penjualan ===
   const totalSales = await db.sale.aggregate({
     _sum: { totalPrice: true },
     where: {
-      date: { gte: startOfDay(threeMonthsAgo) },
+      date: { gte: threeMonthsAgo },
     },
   });
 
@@ -20,8 +21,8 @@ export async function getAdminDashboardAnalytics() {
     _sum: { totalPrice: true },
     where: {
       date: {
-        gte: startOfDay(twoMonthsAgo),
-        lt: startOfDay(oneMonthAgo),
+        gte: twoMonthsAgo,
+        lt: oneMonthAgo,
       },
     },
   });
@@ -29,7 +30,7 @@ export async function getAdminDashboardAnalytics() {
   const currentMonthSales = await db.sale.aggregate({
     _sum: { totalPrice: true },
     where: {
-      date: { gte: startOfDay(oneMonthAgo) },
+      date: { gte: oneMonthAgo },
     },
   });
 
@@ -48,15 +49,15 @@ export async function getAdminDashboardAnalytics() {
   // === Produk ===
   const currentMonthProducts = await db.product.count({
     where: {
-      createdAt: { gte: startOfDay(oneMonthAgo) },
+      createdAt: { gte: oneMonthAgo },
     },
   });
 
   const lastMonthProducts = await db.product.count({
     where: {
       createdAt: {
-        gte: startOfDay(twoMonthsAgo),
-        lt: startOfDay(oneMonthAgo),
+        gte: twoMonthsAgo,
+        lt: oneMonthAgo,
       },
     },
   });
@@ -82,20 +83,34 @@ export async function getAdminDashboardAnalytics() {
         ? "Pertumbuhan negatif"
         : "Tidak ada pertumbuhan";
 
-  // === Chart ===
-  const chartData = await db.sale.groupBy({
-    by: ["date"],
-    _sum: { totalPrice: true },
+  // === Chart: Group by date manually ===
+  const rawSales = await db.sale.findMany({
     where: {
-      date: { gte: startOfDay(threeMonthsAgo) },
+      date: { gte: threeMonthsAgo },
+    },
+    select: {
+      date: true,
+      totalPrice: true,
     },
     orderBy: { date: "asc" },
   });
 
+  const chartMap = new Map<string, number>();
+  for (const sale of rawSales) {
+    const dateKey = sale.date.toISOString().split("T")[0];
+    const currentTotal = chartMap.get(dateKey) ?? 0;
+    chartMap.set(dateKey, currentTotal + Number(sale.totalPrice));
+  }
+
+  const chart = Array.from(chartMap.entries()).map(([date, total]) => ({
+    date,
+    total,
+  }));
+
   // === Table ===
   const saleTable = await db.sale.findMany({
     where: {
-      date: { gte: startOfDay(threeMonthsAgo) },
+      date: { gte: threeMonthsAgo },
     },
     include: {
       product: {
@@ -128,10 +143,7 @@ export async function getAdminDashboardAnalytics() {
         percentage: Number(growthRate.toFixed(2)),
       },
     },
-    chart: chartData.map((item) => ({
-      date: item.date.toISOString().split("T")[0],
-      total: Number(item._sum.totalPrice ?? 0),
-    })),
+    chart,
     table: saleTable.map((sale) => ({
       id: sale.id,
       umkmName: sale.product.user.name,

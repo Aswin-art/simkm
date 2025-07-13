@@ -116,7 +116,7 @@ export function SectionCards({
         <CardHeader>
           <CardDescription>Tingkat Pertumbuhan</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            {data.growthRate.value > 0 ? data.growthRate.value : "0"}%
+            {data.growthRate.value == 0 ? "0" : data.growthRate.value}%
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
