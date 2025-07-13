@@ -15,7 +15,6 @@ export function DataTable() {
   const [data, setData] = React.useState<any>([]);
   const columns = withDndColumn(dashboardColumns);
   const table = useDataTableInstance({ data, columns, getRowId: (row) => row.id.toString() });
-  console.log(data);
 
   const handleFetchData = useCallback(async () => {
     const response = await getAllUmkmSales();

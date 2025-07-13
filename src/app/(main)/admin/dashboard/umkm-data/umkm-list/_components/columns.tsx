@@ -74,7 +74,6 @@ export const dashboardColumns: ColumnDef<z.infer<typeof sectionSchema>>[] = [
     accessorKey: "createdAt",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Tanggal Bergabung" />,
     cell: ({ row }) => {
-      console.log(row.original);
       const date = new Date(row.original.createdAt);
       return (
         <span>
