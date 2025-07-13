@@ -124,6 +124,7 @@ export default function Page() {
                     <Button
                       variant="outline"
                       role="combobox"
+                      disabled={isLoading}
                       aria-expanded={isProductOpen}
                       className="w-full justify-between"
                     >
@@ -135,7 +136,7 @@ export default function Page() {
                   </PopoverTrigger>
                   <PopoverContent className="w-full p-0">
                     <Command>
-                      <CommandInput placeholder="Cari produk..." />
+                      <CommandInput disabled={isLoading} placeholder="Cari produk..." />
                       <CommandList>
                         <CommandEmpty>Tidak ada produk ditemukan.</CommandEmpty>
                         <CommandGroup>
@@ -169,6 +170,7 @@ export default function Page() {
                 <Input
                   id="quantity"
                   type="number"
+                  disabled={isLoading}
                   placeholder="Masukkan jumlah"
                   value={quantity}
                   onChange={(e) => setQuantity(Number(e.target.value))}

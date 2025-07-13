@@ -50,7 +50,14 @@ export function LoginForm() {
             <FormItem>
               <FormLabel>Alamat Email</FormLabel>
               <FormControl>
-                <Input id="email" type="email" placeholder="you@example.com" autoComplete="email" {...field} />
+                <Input
+                  disabled={isLoading}
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -65,6 +72,7 @@ export function LoginForm() {
               <FormControl>
                 <div className="relative">
                   <Input
+                    disabled={isLoading}
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"

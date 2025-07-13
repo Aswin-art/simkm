@@ -55,7 +55,14 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>Nama Usaha</FormLabel>
               <FormControl>
-                <Input id="name" type="text" placeholder="Bakpia Enak" autoComplete="organization" {...field} />
+                <Input
+                  disabled={isLoading}
+                  id="name"
+                  type="text"
+                  placeholder="Bakpia Enak"
+                  autoComplete="organization"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -68,7 +75,13 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>Alamat Usaha</FormLabel>
               <FormControl>
-                <Textarea id="address" placeholder="Jln. Kenanga No.15" autoComplete="street-address" {...field} />
+                <Textarea
+                  disabled={isLoading}
+                  id="address"
+                  placeholder="Jln. Kenanga No.15"
+                  autoComplete="street-address"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -81,7 +94,14 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>Alamat Email</FormLabel>
               <FormControl>
-                <Input id="email" type="email" placeholder="you@example.com" autoComplete="email" {...field} />
+                <Input
+                  disabled={isLoading}
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -96,6 +116,7 @@ export function RegisterForm() {
               <FormControl>
                 <div className="relative">
                   <Input
+                    disabled={isLoading}
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
@@ -124,7 +145,14 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>Nomor Telepon</FormLabel>
               <FormControl>
-                <Input id="phone" type="tel" placeholder="0812345678" autoComplete="tel" {...field} />
+                <Input
+                  disabled={isLoading}
+                  id="phone"
+                  type="tel"
+                  placeholder="0812345678"
+                  autoComplete="tel"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

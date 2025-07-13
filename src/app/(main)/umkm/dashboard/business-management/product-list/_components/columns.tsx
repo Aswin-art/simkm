@@ -37,31 +37,9 @@ export const dashboardColumns: ColumnDef<z.infer<typeof sectionSchema>>[] = [
     cell: ({ row }) => <span>{row.original.name}</span>,
   },
   {
-    accessorKey: "description",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Deskripsi" />,
-    cell: ({ row }) => (
-      <span>
-        {row.original.description.length > 100
-          ? row.original.description.substring(0, 100) + "..."
-          : row.original.description}
-      </span>
-    ),
-    enableSorting: false,
-  },
-  {
     accessorKey: "price",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Harga" />,
     cell: ({ row }) => <span>Rp {row.original.price.toLocaleString()}</span>,
-  },
-  {
-    accessorKey: "totalCost",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Biaya Pembuatan" />,
-    cell: ({ row }) => <span>Rp {row.original.totalCost}</span>,
-  },
-  {
-    accessorKey: "profitMargin",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Profit / Margin" />,
-    cell: ({ row }) => <span>{row.original.profitMargin}%</span>,
   },
   {
     accessorKey: "hpp",

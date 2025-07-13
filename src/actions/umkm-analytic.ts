@@ -7,30 +7,31 @@ import { cookies } from "next/headers";
 export async function getUmkmDashboardAnalytics() {
   const cookieStore = await cookies();
   const userId = cookieStore.get("userId")?.value;
-  const threeMonthsAgo = subMonths(new Date(), 3);
 
   if (!userId) {
     return { error: "Pengguna belum login!" };
   }
 
+  const now = new Date();
+  const threeMonthsAgo = startOfDay(subMonths(now, 3));
+  const twoMonthsAgo = startOfDay(subMonths(now, 2));
+  const oneMonthAgo = startOfDay(subMonths(now, 1));
+
   // === Penjualan ===
   const totalSales = await db.sale.aggregate({
     _sum: { totalPrice: true },
     where: {
-      date: { gte: startOfDay(threeMonthsAgo) },
+      date: { gte: threeMonthsAgo },
       product: { userId },
     },
   });
-
-  const twoMonthsAgo = subMonths(new Date(), 2);
-  const oneMonthAgo = subMonths(new Date(), 1);
 
   const lastMonthSales = await db.sale.aggregate({
     _sum: { totalPrice: true },
     where: {
       date: {
-        gte: startOfDay(twoMonthsAgo),
-        lt: startOfDay(oneMonthAgo),
+        gte: twoMonthsAgo,
+        lt: oneMonthAgo,
       },
       product: { userId },
     },
@@ -39,7 +40,7 @@ export async function getUmkmDashboardAnalytics() {
   const currentMonthSales = await db.sale.aggregate({
     _sum: { totalPrice: true },
     where: {
-      date: { gte: startOfDay(oneMonthAgo) },
+      date: { gte: oneMonthAgo },
       product: { userId },
     },
   });
@@ -56,10 +57,11 @@ export async function getUmkmDashboardAnalytics() {
         ? `Turun ${((Math.abs(salesDiff) / lastSales) * 100).toFixed(1)}% dibanding bulan lalu`
         : `Tidak ada perubahan`;
 
+  // === Produk Baru ===
   const currentMonthProducts = await db.product.count({
     where: {
       userId,
-      createdAt: { gte: startOfDay(oneMonthAgo) },
+      createdAt: { gte: oneMonthAgo },
     },
   });
 
@@ -67,8 +69,8 @@ export async function getUmkmDashboardAnalytics() {
     where: {
       userId,
       createdAt: {
-        gte: startOfDay(twoMonthsAgo),
-        lt: startOfDay(oneMonthAgo),
+        gte: twoMonthsAgo,
+        lt: oneMonthAgo,
       },
     },
   });
@@ -94,20 +96,35 @@ export async function getUmkmDashboardAnalytics() {
         ? "Pertumbuhan negatif"
         : "Tidak ada pertumbuhan";
 
-  // === Chart & Table ===
-  const chartData = await db.sale.groupBy({
-    by: ["date"],
-    _sum: { totalPrice: true },
+  // === Chart: Manual grouping per tanggal ===
+  const rawSales = await db.sale.findMany({
     where: {
-      date: { gte: startOfDay(threeMonthsAgo) },
+      date: { gte: threeMonthsAgo },
       product: { userId },
+    },
+    select: {
+      date: true,
+      totalPrice: true,
     },
     orderBy: { date: "asc" },
   });
 
+  const chartMap = new Map<string, number>();
+  for (const sale of rawSales) {
+    const dateKey = sale.date.toISOString().split("T")[0];
+    const currentTotal = chartMap.get(dateKey) ?? 0;
+    chartMap.set(dateKey, currentTotal + Number(sale.totalPrice));
+  }
+
+  const chart = Array.from(chartMap.entries()).map(([date, total]) => ({
+    date,
+    total,
+  }));
+
+  // === Tabel Penjualan ===
   const saleTable = await db.sale.findMany({
     where: {
-      date: { gte: startOfDay(threeMonthsAgo) },
+      date: { gte: threeMonthsAgo },
       product: { userId },
     },
     include: {
@@ -137,10 +154,7 @@ export async function getUmkmDashboardAnalytics() {
         percentage: Number(growthRate.toFixed(2)),
       },
     },
-    chart: chartData.map((item) => ({
-      date: item.date.toISOString().split("T")[0],
-      total: Number(item._sum.totalPrice ?? 0),
-    })),
+    chart,
     table: saleTable.map((sale) => ({
       id: sale.id,
       productName: sale.product.name,

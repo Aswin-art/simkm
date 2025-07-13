@@ -26,27 +26,18 @@ model User {
 }
 
 model Product {
-  id                  String   @id @default(cuid())
-  userId              String
-  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name                String
-  image               String
-  description         String
-  price               Decimal
-  rawMaterialCost     Decimal  @map("raw_material_cost")
-  laborCost           Decimal  @map("labor_cost")
-  overheadCost        Decimal  @map("overhead_cost")
-  totalCost           Decimal  @map("total_cost")
-  unitProduced        Int      @map("unit_produced")
-  hppPerUnit          Decimal  @map("hpp_per_unit")
-  fixedCost           Decimal  @map("fixed_cost")
-  variableCostPerUnit Decimal  @map("variable_cost_per_unit")
-  pricePerUnit        Decimal  @map("price_per_unit")
-  profitMargin        Decimal  @map("profit_margin")
-  bepUnit             Decimal  @map("bep_unit")
-  sales               Sale[]
-  createdAt           DateTime @default(now()) @map("created_at")
-  updatedAt           DateTime @updatedAt @map("updated_at")
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name            String
+  price           Decimal
+  rawMaterialCost Float
+  totalProduced   Int
+  hppPerUnit      Float
+  bepUnit         Float
+  sales           Sale[]
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
 }
 
 model Sale {

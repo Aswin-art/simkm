@@ -39,10 +39,7 @@ export function DataTable() {
         const mappedData = response.data.map((product) => ({
           id: product.id,
           name: product.name,
-          description: product.description,
           price: Number(product.price),
-          totalCost: Number(product.totalCost),
-          profitMargin: Number(product.profitMargin),
           hpp: Number(product.hppPerUnit),
           bep: Number(product.bepUnit),
           totalSales: Number(product._count.sales || 0),
