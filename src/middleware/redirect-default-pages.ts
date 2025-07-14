@@ -5,8 +5,6 @@ const redirectMap: Record<string, string> = {
   "/admin/dashboard": "/admin/dashboard/statistic/umkm-analytic",
   "/admin/dashboard/statistic": "/admin/dashboard/statistic/umkm-analytic",
   "/admin/dashboard/umkm-data": "/admin/dashboard/umkm-data/umkm-list",
-  "/admin/dashboard/fund-program": "/admin/dashboard/fund-program/program-list",
-  "/admin/users": "/admin/users/user-list",
 
   "/auth": "/auth/login",
 
@@ -14,8 +12,6 @@ const redirectMap: Record<string, string> = {
   "/umkm/dashboard": "/umkm/dashboard/statistic/business-summary",
   "/umkm/dashboard/statistic": "/umkm/dashboard/statistic/business-summary",
   "/umkm/dashboard/business-management": "/umkm/dashboard/business-management/product-list",
-  "/umkm/dashboard/money-inventory": "/umkm/dashboard/money-inventory/money-reports",
-  "/umkm/settings": "/umkm/settings/profile",
 };
 
 export function redirectDefaultPages(req: NextRequest) {

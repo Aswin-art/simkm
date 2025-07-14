@@ -34,7 +34,6 @@ const searchItems = [
     label: "Data Penjualan",
     url: "/umkm/dashboard/business-management/sales-data",
   },
-  { group: "Keuangan & Inventori", icon: Forklift, label: "Laporan", isComing: true, url: "" },
 ];
 
 export function SearchDialog() {
@@ -76,21 +75,16 @@ export function SearchDialog() {
                   .map((item) => (
                     <CommandItem
                       key={item.label}
-                      className={`flex items-center justify-between !py-1.5 ${
-                        item.isComing ? "pointer-events-none cursor-not-allowed opacity-50" : ""
-                      }`}
+                      className={`flex items-center justify-between !py-1.5`}
                       onSelect={() => {
-                        if (!item.isComing) {
-                          setOpen(false);
-                          router.push(item.url);
-                        }
+                        setOpen(false);
+                        router.push(item.url);
                       }}
                     >
                       <div className="flex items-center gap-2">
                         <item.icon />
                         <span>{item.label}</span>
                       </div>
-                      {item.isComing && <CommandShortcut className="text-gray-400">Coming Soon</CommandShortcut>}
                     </CommandItem>
                   ))}
               </CommandGroup>

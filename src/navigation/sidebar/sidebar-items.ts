@@ -1,19 +1,4 @@
-import {
-  Home,
-  ChartPie,
-  ChartLine,
-  ShoppingBag,
-  ReceiptText,
-  Users,
-  List,
-  User,
-  Cog,
-  BarChart4,
-  Boxes,
-  Wallet,
-  FileBarChart2,
-  type LucideIcon,
-} from "lucide-react";
+import { Home, ChartPie, ShoppingBag, ReceiptText, List, BarChart4, Boxes, type LucideIcon } from "lucide-react";
 
 export interface NavSubItem {
   title: string;
@@ -60,30 +45,6 @@ export const adminSidebarItems: NavGroup[] = [
       },
     ],
   },
-  {
-    id: 2,
-    label: "Users",
-    items: [
-      {
-        title: "Kelola Admin",
-        url: "/admin/users",
-        icon: Users,
-        subItems: [{ title: "Daftar Pengguna", url: "/admin/users/user-list", icon: User }],
-      },
-    ],
-  },
-  {
-    id: 3,
-    label: "Others",
-    items: [
-      {
-        title: "Pengaturan",
-        url: "/others",
-        icon: Cog,
-        comingSoon: true,
-      },
-    ],
-  },
 ];
 
 export const umkmSidebarItems: NavGroup[] = [
@@ -109,43 +70,6 @@ export const umkmSidebarItems: NavGroup[] = [
             icon: ReceiptText,
           },
         ],
-      },
-      {
-        title: "Keuangan & Inventori",
-        url: "/umkm/dashboard/money-inventory",
-        icon: Wallet,
-        subItems: [
-          {
-            title: "Laporan",
-            url: "/umkm/dashboard/money-inventory/money-reports",
-            icon: FileBarChart2,
-            comingSoon: true,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 2,
-    label: "Settings",
-    items: [
-      {
-        title: "Pengaturan Akun",
-        url: "/umkm/settings",
-        icon: Users,
-        subItems: [{ title: "Profil", url: "/umkm/settings/profile", icon: User, comingSoon: true }],
-      },
-    ],
-  },
-  {
-    id: 3,
-    label: "Others",
-    items: [
-      {
-        title: "Pengaturan",
-        url: "/others",
-        icon: Cog,
-        comingSoon: true,
       },
     ],
   },
