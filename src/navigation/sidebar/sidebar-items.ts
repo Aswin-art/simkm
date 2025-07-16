@@ -63,7 +63,7 @@ export const umkmSidebarItems: NavGroup[] = [
         url: "/umkm/dashboard/business-management",
         icon: ShoppingBag,
         subItems: [
-          { title: "Daftar Produk", url: "/umkm/dashboard/business-management/product-list", icon: Boxes },
+          { title: "Data Produk", url: "/umkm/dashboard/business-management/product-list", icon: Boxes },
           {
             title: "Data Penjualan",
             url: "/umkm/dashboard/business-management/sales-data",

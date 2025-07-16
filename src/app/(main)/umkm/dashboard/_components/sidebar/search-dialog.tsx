@@ -25,7 +25,7 @@ const searchItems = [
   {
     group: "Manajemen Usaha",
     icon: List,
-    label: "Daftar Produk",
+    label: "Data Produk",
     url: "/umkm/dashboard/business-management/product-list",
   },
   {

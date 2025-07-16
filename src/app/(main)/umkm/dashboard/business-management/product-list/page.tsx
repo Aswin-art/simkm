@@ -28,13 +28,13 @@ export default function Page() {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>Daftar Produk</BreadcrumbPage>
+            <BreadcrumbPage>Data Produk</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
       <div className="flex items-center justify-between gap-4">
         <div className="flex flex-col gap-2">
-          <h2 className="text-3xl font-bold tracking-tight">Daftar Produk</h2>
+          <h2 className="text-3xl font-bold tracking-tight">Data Produk</h2>
         </div>
         <Link
           href={"/umkm/dashboard/business-management/product-list/create"}

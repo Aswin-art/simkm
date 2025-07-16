@@ -51,7 +51,7 @@ const Page = ({ params }: { params: Promise<{ id: string }> }) => {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbLink href="/admin/dashboard/umkm-data/umkm-list">Daftar Produk</BreadcrumbLink>
+            <BreadcrumbLink href="/admin/dashboard/umkm-data/umkm-list">Data Produk</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>

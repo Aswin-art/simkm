@@ -91,7 +91,7 @@ const Page = () => {
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbLink href="/umkm/dashboard/business-management/product-list">Daftar Produk</BreadcrumbLink>
+            <BreadcrumbLink href="/umkm/dashboard/business-management/product-list">Data Produk</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
