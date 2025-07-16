@@ -23,7 +23,7 @@ export const dashboardColumns: ColumnDef<z.infer<typeof sectionSchema>>[] = [
   {
     accessorKey: "bep",
     header: ({ column }) => <DataTableColumnHeader column={column} title="BEP" />,
-    cell: ({ row }) => <span>{row.original.bepUnit.toLocaleString()} unit</span>,
+    cell: ({ row }) => <span>{row.original.bepUnit.toFixed()} unit</span>,
   },
   {
     accessorKey: "salesCount",
